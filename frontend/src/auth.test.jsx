@@ -1,5 +1,12 @@
 import React from "react";
-import { render, screen, waitFor, cleanup, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  cleanup,
+  act,
+  fireEvent,
+} from "@testing-library/react";
 import { beforeEach, afterEach, it, expect, vi } from "vitest";
 import { ChakraProvider } from "@chakra-ui/react";
 import { system } from "./theme";
@@ -7,6 +14,7 @@ const auth = vi.hoisted(() => ({
   callback: null,
   session: null,
   unsubscribe: vi.fn(),
+  updateUser: vi.fn(async () => ({ error: null })),
 }));
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
@@ -17,6 +25,7 @@ vi.mock("@supabase/supabase-js", () => ({
       },
       getSession: async () => ({ data: { session: auth.session } }),
       signOut: async () => ({ error: null }),
+      updateUser: auth.updateUser,
     },
   }),
 }));
@@ -36,6 +45,7 @@ const show = () =>
 beforeEach(() => {
   auth.session = null;
   auth.callback = null;
+  auth.updateUser.mockClear();
   vi.stubGlobal(
     "fetch",
     vi.fn(async (path, options) => {
@@ -67,6 +77,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  window.history.replaceState({}, "", "/");
 });
 it("requires sign-in before rendering private content", async () => {
   show();
@@ -90,4 +101,26 @@ it("refuses a valid-looking session if the backend rejects the account", async (
   show();
   await screen.findByText("This account has not been invited");
   expect(screen.queryByText(/Workspace for/)).not.toBeInTheDocument();
+});
+it("asks invited users to set a password before opening their workspace", async () => {
+  window.history.replaceState(
+    {},
+    "",
+    "/#access_token=fake&refresh_token=fake&type=invite",
+  );
+  auth.session = { access_token: "allowed", user: { id: "alice" } };
+  show();
+  await screen.findByRole("button", { name: "Set password" });
+  expect(screen.queryByText(/Workspace for/)).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("New password"), {
+    target: { value: "a-long-new-password" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Set password" }));
+  await waitFor(() =>
+    expect(auth.updateUser).toHaveBeenCalledWith({
+      password: "a-long-new-password",
+    }),
+  );
+  await screen.findByText("Workspace for alice@example.test");
+  expect(window.location.hash).toBe("#dashboard");
 });

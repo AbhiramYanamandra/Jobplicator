@@ -22,13 +22,20 @@ const AuthContext = createContext({
   signOut: async () => {},
 });
 export const useAuth = () => useContext(AuthContext);
+function initialPasswordMode() {
+  const hashType = new URLSearchParams(window.location.hash.slice(1)).get(
+    "type",
+  );
+  const queryType = new URLSearchParams(window.location.search).get("type");
+  return hashType === "invite" || queryType === "invite" ? "invite" : null;
+}
 export function AuthGate({ children }) {
   const [config, setConfig] = useState(null),
     [client, setClient] = useState(null),
     [user, setUser] = useState(null),
     [error, setError] = useState(""),
     [ready, setReady] = useState(false),
-    [recovery, setRecovery] = useState(false);
+    [passwordMode, setPasswordMode] = useState(initialPasswordMode);
   useEffect(() => {
     let active = true,
       unsubscribe;
@@ -88,7 +95,9 @@ export function AuthGate({ children }) {
           }
         }
         const { data } = supabase.auth.onAuthStateChange((event, session) => {
-          if (event === "PASSWORD_RECOVERY" && active) setRecovery(true);
+          if (event === "PASSWORD_RECOVERY" && active)
+            setPasswordMode("recovery");
+          if (event === "SIGNED_OUT" && active) setPasswordMode(null);
           queueMicrotask(() => {
             if (active) applySession(session);
           });
@@ -121,6 +130,7 @@ export function AuthGate({ children }) {
     }
     setAccessToken(null);
     setUser(null);
+    setPasswordMode(null);
     location.hash = "dashboard";
   };
   if (!ready)
@@ -130,12 +140,12 @@ export function AuthGate({ children }) {
         Opening your workspace…
       </Flex>
     );
-  if (!user || recovery)
+  if (!user || passwordMode)
     return (
       <Login
         client={client}
-        recovery={recovery}
-        done={() => setRecovery(false)}
+        passwordMode={passwordMode}
+        done={() => setPasswordMode(null)}
         error={error}
         clearError={() => setError("")}
       />
@@ -146,7 +156,7 @@ export function AuthGate({ children }) {
     </AuthContext.Provider>
   );
 }
-function Login({ client, recovery, done, error, clearError }) {
+function Login({ client, passwordMode, done, error, clearError }) {
   const [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [busy, setBusy] = useState(false),
@@ -174,14 +184,18 @@ function Login({ client, recovery, done, error, clearError }) {
         </Flex>
         <Panel>
           <Heading size="lg" mb="2">
-            {recovery
-              ? "Choose a new password"
-              : "Your next chapter, securely saved."}
+            {passwordMode === "invite"
+              ? "Choose your password"
+              : passwordMode === "recovery"
+                ? "Choose a new password"
+                : "Your next chapter, securely saved."}
           </Heading>
           <Text color="muted" fontSize="sm" mb="6">
-            {recovery
-              ? "Update your password to continue."
-              : "Sign in with your invited account to access your private workspace."}
+            {passwordMode === "invite"
+              ? "Set a password to finish accepting your invitation."
+              : passwordMode === "recovery"
+                ? "Update your password to continue."
+                : "Sign in with your invited account to access your private workspace."}
           </Text>
           <form
             onSubmit={(e) => {
@@ -191,9 +205,14 @@ function Login({ client, recovery, done, error, clearError }) {
                   throw new Error(
                     "Authentication is not configured. Check the server settings.",
                   );
-                if (recovery) {
+                if (passwordMode) {
                   const { error } = await client.auth.updateUser({ password });
                   if (error) throw error;
+                  window.history.replaceState(
+                    window.history.state,
+                    "",
+                    `${window.location.pathname}#dashboard`,
+                  );
                   done();
                 } else {
                   const { error } = await client.auth.signInWithPassword({
@@ -206,7 +225,7 @@ function Login({ client, recovery, done, error, clearError }) {
             }}
           >
             <Stack gap="4">
-              {!recovery && (
+              {!passwordMode && (
                 <Box>
                   <Text as="label" htmlFor="login-email" fontSize="sm">
                     Email address
@@ -223,13 +242,15 @@ function Login({ client, recovery, done, error, clearError }) {
               )}
               <Box>
                 <Text as="label" htmlFor="login-password" fontSize="sm">
-                  {recovery ? "New password" : "Password"}
+                  {passwordMode ? "New password" : "Password"}
                 </Text>
                 <Input
                   id="login-password"
                   type="password"
-                  autoComplete={recovery ? "new-password" : "current-password"}
-                  minLength={recovery ? 12 : undefined}
+                  autoComplete={
+                    passwordMode ? "new-password" : "current-password"
+                  }
+                  minLength={passwordMode ? 12 : undefined}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -245,11 +266,15 @@ function Login({ client, recovery, done, error, clearError }) {
                 loading={busy}
                 disabled={!client}
               >
-                {recovery ? "Update password" : "Sign in"}
+                {passwordMode === "invite"
+                  ? "Set password"
+                  : passwordMode === "recovery"
+                    ? "Update password"
+                    : "Sign in"}
               </Button>
             </Stack>
           </form>
-          {!recovery && (
+          {!passwordMode && (
             <Button
               variant="plain"
               size="sm"
