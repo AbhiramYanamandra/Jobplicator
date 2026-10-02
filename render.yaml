@@ -26,3 +26,7 @@ services:
         sync: false
       - key: PUBLIC_URL
         sync: false
+      - key: INDEED_IMPORT_OWNER_ID
+        sync: false
+      - key: INDEED_IMPORT_TOKEN
+        sync: false

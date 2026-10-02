@@ -1,7 +1,7 @@
 from __future__ import annotations
 from contextlib import asynccontextmanager
 from pathlib import Path
-import datetime, json, logging
+import datetime, json, logging, os, secrets
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, Body, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -9,7 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from settings import Settings
 from auth import User, TokenVerifier, current_user, workspace
-from db import make_engine, repo, now
+from db import make_engine, repo, now, use_repository
 from schemas import (
     JobIn,
     ApplicationIn,
@@ -39,6 +39,8 @@ from adapters.greenhouse import GreenhouseAdapter
 from adapters.lever import LeverAdapter
 from adapters.generic_url import GenericURLAdapter
 from adapters.registry import ADAPTERS
+from urllib.parse import urlsplit
+from uuid import UUID
 
 ROOT = Path(__file__).resolve().parent
 log = logging.getLogger("jobplicator")
@@ -563,6 +565,57 @@ def create_app(settings=None, engine=None, verifier=None):
         if settings.auth_mode == "supabase"
         else None
     )
+
+    @app.post("/api/integrations/indeed/jobs")
+    def import_indeed_jobs(request: Request, payload: dict = Body(...)):
+        """Receive results from the owner's authorised Claude Indeed connector."""
+        token = os.getenv("INDEED_IMPORT_TOKEN", "")
+        owner = os.getenv("INDEED_IMPORT_OWNER_ID", "")
+        supplied = request.headers.get("Authorization", "")
+        if not token or len(token) < 32 or not owner:
+            raise HTTPException(503, "Indeed bridge is not configured")
+        if not supplied.startswith("Bearer ") or not secrets.compare_digest(supplied[7:], token):
+            raise HTTPException(401, "Invalid import token")
+        try:
+            owner = str(UUID(owner))
+        except ValueError:
+            raise HTTPException(503, "Indeed bridge owner is invalid") from None
+        if settings.allowed_user_ids and owner not in settings.allowed_user_ids:
+            raise HTTPException(503, "Indeed bridge owner is not allowed")
+        items = payload.get("jobs")
+        if not isinstance(items, list) or not 1 <= len(items) <= 100:
+            raise HTTPException(422, "Provide 1 to 100 jobs")
+        validated = []
+        for item in items:
+            if not isinstance(item, dict):
+                raise HTTPException(422, "Each job must be an object")
+            url = item.get("source_url", "")
+            parsed = urlsplit(url) if isinstance(url, str) else None
+            if not parsed or parsed.scheme != "https" or parsed.hostname not in (
+                "indeed.com", "www.indeed.com", "au.indeed.com", "sg.indeed.com",
+                "to.indeed.com", "au.indeed.com.au", "sg.indeed.com.sg",
+            ) or parsed.username or parsed.password:
+                raise HTTPException(422, "Each job needs an Indeed HTTPS URL")
+            values = {k: v for k, v in item.items() if k in JobIn.model_fields}
+            values["source"] = "Indeed"
+            try:
+                validated.append(JobIn.model_validate(values))
+            except ValueError as exc:
+                raise HTTPException(422, "Invalid job: " + str(exc)[:300]) from None
+        created, skipped = [], 0
+        with engine.begin() as connection:
+            with use_repository(connection, owner):
+                r = repo()
+                r.lock_account()
+                existing_urls = {j["source_url"] for j in r.all("jobs") if j.get("source_url")}
+                for job in validated:
+                    if job.source_url in existing_urls:
+                        skipped += 1
+                        continue
+                    created.append(add_job(job.model_dump()))
+                    existing_urls.add(job.source_url)
+                r.insert("ingestion_runs", {"source": "indeed_connector", "status": "ok", "found_count": len(created), "detail": f"{skipped} duplicate URLs skipped"})
+        return {"created": len(created), "skipped": skipped, "ids": created}
 
     @app.middleware("http")
     async def request_safety(request, call_next):
