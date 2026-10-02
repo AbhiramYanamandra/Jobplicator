@@ -1,0 +1,150 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #62ac7c;
+  outline-offset: 3px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+.data-table th {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--chakra-colors-muted);
+  font-weight: 600;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--chakra-colors-line);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 17px 14px;
+  border-bottom: 1px solid var(--chakra-colors-line);
+  vertical-align: top;
+}
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+.data-table tbody tr:hover {
+  background: var(--chakra-colors-soft);
+}
+.cluster-node {
+  cursor: pointer;
+  outline: none;
+}
+.cluster-node:focus circle,
+.cluster-node:hover circle {
+  stroke: var(--chakra-colors-ink);
+  stroke-width: 3;
+}
+.resume-sheet {
+  font-family: "Times New Roman", serif;
+  color: #000;
+  background: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 5mm 12.7mm 12.7mm;
+  font-size: 9pt;
+  line-height: 1.05;
+  box-shadow: 0 8px 40px #0001;
+}
+.resume-sheet header {
+  text-align: center;
+  margin-bottom: 2pt;
+}
+.resume-sheet header h1 {
+  font-size: 15pt;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.resume-sheet header p {
+  font-size: 10pt;
+}
+.resume-sheet section {
+  margin-top: 2pt;
+}
+.resume-sheet h2 {
+  font-weight: bold;
+  font-size: 9pt;
+  border-bottom: 0.7pt solid black;
+  margin: 0 0 1pt;
+}
+.resume-sheet h3 {
+  font-weight: bold;
+  font-size: 9pt;
+}
+.resume-sheet ul {
+  list-style: disc;
+  padding-left: 17pt;
+  margin: 0;
+}
+.resume-sheet p,
+.resume-sheet li {
+  margin: 0;
+}
+.resume-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8pt;
+}
+.resume-row em {
+  white-space: nowrap;
+  font-weight: bold;
+}
+.resume-item {
+  margin-bottom: 2pt;
+  break-inside: avoid;
+}
+.resume-sheet .resume-skill {
+  padding-left: 12pt;
+}
+.resume-sheet .resume-summary {
+  text-align: justify;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  #resume-preview,
+  #resume-preview * {
+    visibility: visible !important;
+  }
+  #resume-preview {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+  body {
+    background: white !important;
+  }
+  .resume-sheet {
+    min-height: 0 !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

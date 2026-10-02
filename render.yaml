@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: jobplicator
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: AUTH_MODE
+        value: supabase
+      - key: DATABASE_SSLMODE
+        value: require
+      - key: ENABLE_GENERIC_URL_IMPORT
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: ALLOWED_USER_IDS
+        sync: false
+      - key: PUBLIC_URL
+        sync: false

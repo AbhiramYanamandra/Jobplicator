@@ -1,0 +1,24 @@
+{
+  "release": "4.0.0-source",
+  "base": "Existing Jobplicator React source refactor of v3.0",
+  "frontend": "React 19 / Chakra UI 3",
+  "backend": "FastAPI / SQLAlchemy / PostgreSQL; local SQLite option",
+  "auth": "Supabase asymmetric JWT verification and invite allow-list",
+  "deploy": "Render Docker blueprint; projects not created",
+  "private_data_included": false,
+  "validation": {
+    "sqlite_tests": 56,
+    "postgresql_tests": 56,
+    "frontend_tests": 32,
+    "production_frontend_build": "passed",
+    "docker_build": "not run: daemon unavailable",
+    "browser_e2e": "not run: prior preview permission declined",
+    "hosted_deployment": "not run: projects not configured"
+  },
+  "frontend_versions": {
+    "react": "19.3.0",
+    "@chakra-ui/react": "3.37.0",
+    "@supabase/supabase-js": "2.117.2",
+    "vite": "7.3.6"
+  }
+}

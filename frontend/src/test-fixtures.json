@@ -1,0 +1,1454 @@
+{
+  "/api/profile": {
+    "version": "2.0",
+    "profile": [
+      {
+        "Field": "Name",
+        "Value": "Alex Example"
+      },
+      {
+        "Field": "Location",
+        "Value": "Example City"
+      },
+      {
+        "Field": "Degree",
+        "Value": "BSc Computer Science"
+      },
+      {
+        "Field": "Primary positioning",
+        "Value": "Software engineering and data tools"
+      }
+    ],
+    "experiences": [
+      {
+        "experience_id": "EXP-DEMO",
+        "organisation": "Example Labs (fictional)",
+        "role": "Software Engineer",
+        "location": "Example City",
+        "start": "2024",
+        "end": "2025",
+        "summary": "Built internal software tools.",
+        "technologies": "Python; React; SQL"
+      }
+    ],
+    "projects": [
+      {
+        "project_id": "PRJ-DEMO",
+        "project": "Demo Search Tool",
+        "course_or_context": "Sample project",
+        "technologies": "Python; SQL"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "DEMO-01",
+        "parent_id": "EXP-DEMO",
+        "type": "software",
+        "raw_fact": "Built a Python reporting tool for a sample dataset.",
+        "action": "Built a Python reporting tool",
+        "result": "Made sample reports repeatable",
+        "metric": "",
+        "context": "Fictional example",
+        "technologies": "Python; SQL",
+        "competencies": "Testing",
+        "role_tags": "software",
+        "evidence_level": "supported",
+        "confidence": "high",
+        "claim_restriction": "Fictional example only; replace with your own verified evidence",
+        "source_doc": "Example fixture"
+      },
+      {
+        "evidence_id": "DEMO-02",
+        "parent_id": "PRJ-DEMO",
+        "type": "project",
+        "raw_fact": "Built a searchable demo interface in React.",
+        "action": "Built a React search interface",
+        "result": "Enabled filtering of sample records",
+        "metric": "",
+        "technologies": "React; TypeScript",
+        "evidence_level": "supported",
+        "claim_restriction": "Fictional example only"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Python",
+        "category": "Programming",
+        "evidence_strength": "Strong"
+      }
+    ],
+    "metrics": [],
+    "star_stories": [
+      {
+        "story_id": "STAR-DEMO",
+        "parent_id": "EXP-DEMO",
+        "situation": "Sample reports were inconsistent.",
+        "task": "Make reporting repeatable.",
+        "action": "Built and tested a Python tool.",
+        "result": "Repeatable sample reports.",
+        "skills": "Python; testing"
+      }
+    ],
+    "coursework": [],
+    "sources": [],
+    "conflicts": [],
+    "role_mapping": []
+  },
+  "/api/jobs": [
+    {
+      "id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Graduate Software Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "Python React TypeScript SQL testing required",
+      "role_family": "Software / Full-stack",
+      "seniority": "Graduate / Entry Level",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-02T04:19:45.345454+00:00",
+      "updated_at": "2026-10-02T04:19:45.348021+00:00",
+      "career_fit": 98.0,
+      "resume_fit": 84.0,
+      "potential_fit": 98.0,
+      "priority_score": 96.0,
+      "application_status": null,
+      "next_action": null,
+      "follow_up_date": null
+    },
+    {
+      "id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Embedded Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "C++ STM32 FreeRTOS debugging required",
+      "role_family": "Embedded / Firmware",
+      "seniority": "Experienced",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-02T04:19:45.348394+00:00",
+      "updated_at": "2026-10-02T04:19:45.349786+00:00",
+      "career_fit": 52.0,
+      "resume_fit": 45.0,
+      "potential_fit": 54.0,
+      "priority_score": 63.0,
+      "application_status": null,
+      "next_action": null,
+      "follow_up_date": null
+    }
+  ],
+  "/api/evidence": [
+    {
+      "evidence_id": "DEMO-01",
+      "parent_id": "EXP-DEMO",
+      "type": "software",
+      "raw_fact": "Built a Python reporting tool for a sample dataset.",
+      "action": "Built a Python reporting tool",
+      "result": "Made sample reports repeatable",
+      "metric": "",
+      "context": "Fictional example",
+      "technologies": "Python; SQL",
+      "competencies": "Testing",
+      "role_tags": "software",
+      "evidence_level": "supported",
+      "confidence": "high",
+      "claim_restriction": "Fictional example only; replace with your own verified evidence",
+      "source_doc": "Example fixture"
+    },
+    {
+      "evidence_id": "DEMO-02",
+      "parent_id": "PRJ-DEMO",
+      "type": "project",
+      "raw_fact": "Built a searchable demo interface in React.",
+      "action": "Built a React search interface",
+      "result": "Enabled filtering of sample records",
+      "metric": "",
+      "technologies": "React; TypeScript",
+      "evidence_level": "supported",
+      "claim_restriction": "Fictional example only"
+    }
+  ],
+  "/api/applications": [],
+  "/api/analytics": {
+    "jobs": 2,
+    "applied": 0,
+    "interviews": 0,
+    "offers": 0,
+    "role_conversion": []
+  },
+  "/api/adapters": {
+    "manual": {
+      "status": "ready",
+      "mode": "paste",
+      "notes": "Paste any job description or source URL."
+    },
+    "generic_url": {
+      "status": "Disabled by default",
+      "notes": "Public URL imports require ENABLE_GENERIC_URL_IMPORT=true; board imports remain available."
+    },
+    "greenhouse": {
+      "status": "ready",
+      "mode": "public_api",
+      "notes": "Greenhouse public board API."
+    },
+    "lever": {
+      "status": "ready",
+      "mode": "public_api",
+      "notes": "Lever public postings API."
+    },
+    "seek": {
+      "status": "connector_required",
+      "mode": "authorised_provider",
+      "notes": "Use manual import, job-alert email, or an authorised connector/provider."
+    },
+    "indeed": {
+      "status": "connector_required",
+      "mode": "authorised_provider",
+      "notes": "Use manual import, email alerts, or an authorised provider/API."
+    },
+    "linkedin": {
+      "status": "connector_required",
+      "mode": "authorised_provider",
+      "notes": "People/job enrichment should use public search or authorised integration, not brittle scraping."
+    },
+    "workday": {
+      "status": "site_specific",
+      "mode": "adapter_factory",
+      "notes": "Workday tenants vary; add tenant-specific public endpoint adapter where available."
+    },
+    "company_careers": {
+      "status": "ready_via_url",
+      "mode": "generic_url",
+      "notes": "Use GenericURLAdapter or add a company-specific feed adapter."
+    },
+    "email_alerts": {
+      "status": "interface_ready",
+      "mode": "email_connector",
+      "notes": "Connect Gmail/Outlook later and parse job-alert messages into JobPosting objects."
+    },
+    "startup_boards": {
+      "status": "adapter_factory",
+      "mode": "feed_or_url",
+      "notes": "Use public feeds/APIs where available, otherwise generic URL import."
+    }
+  },
+  "/api/ingestion": [],
+  "/api/v3/clusters": {
+    "nodes": [
+      {
+        "id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "source": "Fictional demo",
+        "source_url": null,
+        "company": "Example Labs (fictional)",
+        "title": "Graduate Software Engineer",
+        "location": "Example City",
+        "country": null,
+        "work_mode": null,
+        "employment_type": null,
+        "salary": null,
+        "posted_at": null,
+        "closing_date": null,
+        "description_raw": "Python React TypeScript SQL testing required",
+        "role_family": "Software / Full-stack",
+        "seniority": "Graduate / Entry Level",
+        "industry": null,
+        "work_rights": null,
+        "status": "discovered",
+        "created_at": "2026-10-02T04:19:45.345454+00:00",
+        "updated_at": "2026-10-02T04:19:45.348021+00:00",
+        "career_fit": 98.0,
+        "resume_fit": 84.0,
+        "potential_fit": 98.0,
+        "priority_score": 96.0,
+        "application_status": null,
+        "next_action": null,
+        "follow_up_date": null,
+        "x": 0.6992,
+        "y": 0.04375999999999999
+      },
+      {
+        "id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "source": "Fictional demo",
+        "source_url": null,
+        "company": "Example Labs (fictional)",
+        "title": "Embedded Engineer",
+        "location": "Example City",
+        "country": null,
+        "work_mode": null,
+        "employment_type": null,
+        "salary": null,
+        "posted_at": null,
+        "closing_date": null,
+        "description_raw": "C++ STM32 FreeRTOS debugging required",
+        "role_family": "Embedded / Firmware",
+        "seniority": "Experienced",
+        "industry": null,
+        "work_rights": null,
+        "status": "discovered",
+        "created_at": "2026-10-02T04:19:45.348394+00:00",
+        "updated_at": "2026-10-02T04:19:45.349786+00:00",
+        "career_fit": 52.0,
+        "resume_fit": 45.0,
+        "potential_fit": 54.0,
+        "priority_score": 63.0,
+        "application_status": null,
+        "next_action": null,
+        "follow_up_date": null,
+        "x": -0.50936,
+        "y": -0.16471999999999998
+      }
+    ],
+    "edges": [],
+    "clusters": [
+      {
+        "role_family": "Software / Full-stack",
+        "job_count": 1,
+        "avg_fit": 98.0,
+        "applications": 0,
+        "interviews": 0,
+        "top_skills": ["C", "Python", "React", "TypeScript", "SQL"],
+        "top_gaps": []
+      },
+      {
+        "role_family": "Embedded / Firmware",
+        "job_count": 1,
+        "avg_fit": 52.0,
+        "applications": 0,
+        "interviews": 0,
+        "top_skills": ["C++", "C", "STM32", "FreeRTOS"],
+        "top_gaps": ["C++", "STM32", "FreeRTOS"]
+      }
+    ]
+  },
+  "/api/v3/analytics": {
+    "applications": 0,
+    "funnel": [
+      {
+        "stage": "applied",
+        "count": 0
+      },
+      {
+        "stage": "oa",
+        "count": 0
+      },
+      {
+        "stage": "phone screen",
+        "count": 0
+      },
+      {
+        "stage": "technical",
+        "count": 0
+      },
+      {
+        "stage": "final",
+        "count": 0
+      },
+      {
+        "stage": "offer",
+        "count": 0
+      }
+    ],
+    "role_performance": [],
+    "source_performance": []
+  },
+  "/api/v3/skills": [
+    {
+      "skill": "C++",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "None",
+      "gap": "High",
+      "action": "Learn / build evidence"
+    },
+    {
+      "skill": "STM32",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "None",
+      "gap": "High",
+      "action": "Learn / build evidence"
+    },
+    {
+      "skill": "FreeRTOS",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "None",
+      "gap": "High",
+      "action": "Learn / build evidence"
+    },
+    {
+      "skill": "C",
+      "jobs": 2,
+      "demand_pct": 100.0,
+      "required": 2,
+      "preferred": 0,
+      "evidence": "Strong",
+      "gap": "None",
+      "action": "Surface existing evidence"
+    },
+    {
+      "skill": "Python",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "Strong",
+      "gap": "None",
+      "action": "Surface existing evidence"
+    },
+    {
+      "skill": "React",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "Strong",
+      "gap": "None",
+      "action": "Surface existing evidence"
+    },
+    {
+      "skill": "TypeScript",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "Strong",
+      "gap": "None",
+      "action": "Surface existing evidence"
+    },
+    {
+      "skill": "SQL",
+      "jobs": 1,
+      "demand_pct": 50.0,
+      "required": 1,
+      "preferred": 0,
+      "evidence": "Strong",
+      "gap": "None",
+      "action": "Surface existing evidence"
+    }
+  ],
+  "/api/v3/strategy": {
+    "apply_now": [
+      {
+        "id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "source": "Fictional demo",
+        "source_url": null,
+        "company": "Example Labs (fictional)",
+        "title": "Graduate Software Engineer",
+        "location": "Example City",
+        "country": null,
+        "work_mode": null,
+        "employment_type": null,
+        "salary": null,
+        "posted_at": null,
+        "closing_date": null,
+        "description_raw": "Python React TypeScript SQL testing required",
+        "role_family": "Software / Full-stack",
+        "seniority": "Graduate / Entry Level",
+        "industry": null,
+        "work_rights": null,
+        "status": "discovered",
+        "created_at": "2026-10-02T04:19:45.345454+00:00",
+        "updated_at": "2026-10-02T04:19:45.348021+00:00",
+        "career_fit": 98.0,
+        "resume_fit": 84.0,
+        "potential_fit": 98.0,
+        "priority_score": 96.0,
+        "application_status": null,
+        "next_action": null,
+        "follow_up_date": null
+      }
+    ],
+    "follow_ups": [],
+    "skill_focus": [
+      {
+        "skill": "C++",
+        "jobs": 1,
+        "demand_pct": 50.0,
+        "required": 1,
+        "preferred": 0,
+        "evidence": "None",
+        "gap": "High",
+        "action": "Learn / build evidence"
+      },
+      {
+        "skill": "STM32",
+        "jobs": 1,
+        "demand_pct": 50.0,
+        "required": 1,
+        "preferred": 0,
+        "evidence": "None",
+        "gap": "High",
+        "action": "Learn / build evidence"
+      },
+      {
+        "skill": "FreeRTOS",
+        "jobs": 1,
+        "demand_pct": 50.0,
+        "required": 1,
+        "preferred": 0,
+        "evidence": "None",
+        "gap": "High",
+        "action": "Learn / build evidence"
+      }
+    ],
+    "role_focus": "Software / Full-stack",
+    "observed": "Recommendations combine fit, priority, tracked application history and current skill demand.",
+    "confidence": "Early signal"
+  },
+  "/api/v3/questions": {
+    "questions": [
+      {
+        "id": 2,
+        "title": "Number of Islands",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Medium",
+        "primary_topic": "Graphs",
+        "secondary_topics": "[]",
+        "source_type": "Company-tagged prep",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.350199+00:00",
+        "companies": [
+          {
+            "id": 1,
+            "question_id": 2,
+            "company": "Example Labs (fictional)",
+            "role": "Graduate",
+            "interview_stage": "OA",
+            "source_type": "Company-tagged prep",
+            "confidence": "Reported"
+          }
+        ],
+        "attempts": []
+      },
+      {
+        "id": 1,
+        "title": "Two Sum",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Easy",
+        "primary_topic": "Arrays",
+        "secondary_topics": "[]",
+        "source_type": "General practice",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.349890+00:00",
+        "companies": [],
+        "attempts": []
+      }
+    ],
+    "difficulty": {
+      "Medium": 1,
+      "Easy": 1
+    },
+    "topic_readiness": [
+      {
+        "topic": "Graphs",
+        "attempted": 0,
+        "solved": 0,
+        "rate": 0.0
+      },
+      {
+        "topic": "Arrays",
+        "attempted": 0,
+        "solved": 0,
+        "rate": 0.0
+      }
+    ],
+    "company_topics": [
+      {
+        "company": "Example Labs (fictional)",
+        "primary_topic": "Graphs",
+        "count": 1
+      }
+    ]
+  },
+  "/api/v3/interview-questions": [],
+  "/api/v3/reminders": {
+    "today": "2026-10-02",
+    "items": []
+  },
+  "/api/v3/scoring-weights": {
+    "current": {
+      "technical_skills": 30,
+      "evidence_relevance": 20,
+      "domain_relevance": 15,
+      "preferred_skills": 10,
+      "education": 10,
+      "experience_level": 5,
+      "location_work_rights": 5,
+      "ats_terminology": 5
+    },
+    "source": "transparent baseline",
+    "history": []
+  },
+  "/api/v3/weekly-report": {
+    "week_start": "2026-09-28",
+    "applications": 0,
+    "top_role": "Software / Full-stack",
+    "apply_now": 1,
+    "follow_ups": 0,
+    "skill_focus": ["C++", "STM32", "FreeRTOS"],
+    "signal": "Early signal"
+  },
+  "/api/resume-draft": {
+    "content": {
+      "resume": {
+        "education": {
+          "institution": "Example University",
+          "location": "Example City",
+          "degree": "BSc Computer Science",
+          "details": "",
+          "dates": "2020\u20132024",
+          "highlights": []
+        },
+        "summary": "Software engineer working with Python and React.",
+        "skills": [
+          {
+            "label": "Programming",
+            "value": "Python, React, SQL"
+          }
+        ],
+        "experience": [
+          {
+            "id": "demo-exp",
+            "parentId": "EXP-DEMO",
+            "role": "Software Engineer",
+            "org": "Example Labs (fictional)",
+            "location": "Example City",
+            "dates": "2024\u20132025",
+            "bullets": [
+              {
+                "text": "Built a Python reporting tool for a sample dataset.",
+                "evidence": ["DEMO-01"]
+              }
+            ]
+          }
+        ],
+        "projects": [
+          {
+            "id": "demo-project",
+            "parentId": "PRJ-DEMO",
+            "title": "Demo Search Tool",
+            "subtitle": "Sample project",
+            "dates": "2024",
+            "bullets": [
+              {
+                "text": "Built a searchable demo interface in React.",
+                "evidence": ["DEMO-02"]
+              }
+            ]
+          }
+        ]
+      },
+      "contact": {
+        "name": "Alex Example",
+        "line": "alex@example.test"
+      }
+    },
+    "revision": 1,
+    "updated_at": "2026-10-02T04:19:45.350698+00:00"
+  },
+  "/api/me": {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "email": "local@example.test"
+  },
+  "/api/config": {
+    "auth_mode": "local",
+    "supabase_url": "",
+    "supabase_publishable_key": "",
+    "environment": "development"
+  },
+  "/api/jobs/JOB-428C10C5DFF04A16AA83BCE2CE6A39AC": {
+    "job": {
+      "id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Graduate Software Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "Python React TypeScript SQL testing required",
+      "role_family": "Software / Full-stack",
+      "seniority": "Graduate / Entry Level",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-02T04:19:45.345454+00:00",
+      "updated_at": "2026-10-02T04:19:45.348021+00:00"
+    },
+    "requirements": [
+      {
+        "id": 1,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "C",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 2,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "Python",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 3,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "React",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 4,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "TypeScript",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 5,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "SQL",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      }
+    ],
+    "match": {
+      "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+      "career_fit": 98.0,
+      "resume_fit": 84.0,
+      "potential_fit": 98.0,
+      "priority_score": 96.0,
+      "rationale": "Evidence-weighted estimate; not a hiring probability.",
+      "updated_at": "2026-10-02T04:19:45.347611+00:00"
+    },
+    "evidence_matches": [
+      {
+        "id": 1,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "C",
+        "evidence_id": "DEMO-01",
+        "match_type": "direct",
+        "match_score": 1.0,
+        "reason": "Built a Python reporting tool for a sample dataset."
+      },
+      {
+        "id": 2,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "Python",
+        "evidence_id": "DEMO-01",
+        "match_type": "direct",
+        "match_score": 1.0,
+        "reason": "Built a Python reporting tool for a sample dataset."
+      },
+      {
+        "id": 3,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "React",
+        "evidence_id": "DEMO-02",
+        "match_type": "direct",
+        "match_score": 1.0,
+        "reason": "Built a searchable demo interface in React."
+      },
+      {
+        "id": 4,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "TypeScript",
+        "evidence_id": "DEMO-02",
+        "match_type": "direct",
+        "match_score": 1.0,
+        "reason": "Built a searchable demo interface in React."
+      },
+      {
+        "id": 5,
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "requirement": "SQL",
+        "evidence_id": "DEMO-01",
+        "match_type": "direct",
+        "match_score": 1.0,
+        "reason": "Built a Python reporting tool for a sample dataset."
+      }
+    ],
+    "dossier": {
+      "top_evidence": [
+        {
+          "evidence_id": "DEMO-01",
+          "parent_id": "EXP-DEMO",
+          "type": "software",
+          "raw_fact": "Built a Python reporting tool for a sample dataset.",
+          "action": "Built a Python reporting tool",
+          "result": "Made sample reports repeatable",
+          "metric": "",
+          "context": "Fictional example",
+          "technologies": "Python; SQL",
+          "competencies": "Testing",
+          "role_tags": "software",
+          "evidence_level": "supported",
+          "confidence": "high",
+          "claim_restriction": "Fictional example only; replace with your own verified evidence",
+          "source_doc": "Example fixture"
+        },
+        {
+          "evidence_id": "DEMO-01",
+          "parent_id": "EXP-DEMO",
+          "type": "software",
+          "raw_fact": "Built a Python reporting tool for a sample dataset.",
+          "action": "Built a Python reporting tool",
+          "result": "Made sample reports repeatable",
+          "metric": "",
+          "context": "Fictional example",
+          "technologies": "Python; SQL",
+          "competencies": "Testing",
+          "role_tags": "software",
+          "evidence_level": "supported",
+          "confidence": "high",
+          "claim_restriction": "Fictional example only; replace with your own verified evidence",
+          "source_doc": "Example fixture"
+        },
+        {
+          "evidence_id": "DEMO-02",
+          "parent_id": "PRJ-DEMO",
+          "type": "project",
+          "raw_fact": "Built a searchable demo interface in React.",
+          "action": "Built a React search interface",
+          "result": "Enabled filtering of sample records",
+          "metric": "",
+          "technologies": "React; TypeScript",
+          "evidence_level": "supported",
+          "claim_restriction": "Fictional example only"
+        },
+        {
+          "evidence_id": "DEMO-02",
+          "parent_id": "PRJ-DEMO",
+          "type": "project",
+          "raw_fact": "Built a searchable demo interface in React.",
+          "action": "Built a React search interface",
+          "result": "Enabled filtering of sample records",
+          "metric": "",
+          "technologies": "React; TypeScript",
+          "evidence_level": "supported",
+          "claim_restriction": "Fictional example only"
+        }
+      ],
+      "strong": [
+        {
+          "id": 1,
+          "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+          "requirement": "C",
+          "evidence_id": "DEMO-01",
+          "match_type": "direct",
+          "match_score": 1.0,
+          "reason": "Built a Python reporting tool for a sample dataset."
+        },
+        {
+          "id": 2,
+          "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+          "requirement": "Python",
+          "evidence_id": "DEMO-01",
+          "match_type": "direct",
+          "match_score": 1.0,
+          "reason": "Built a Python reporting tool for a sample dataset."
+        },
+        {
+          "id": 3,
+          "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+          "requirement": "React",
+          "evidence_id": "DEMO-02",
+          "match_type": "direct",
+          "match_score": 1.0,
+          "reason": "Built a searchable demo interface in React."
+        },
+        {
+          "id": 4,
+          "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+          "requirement": "TypeScript",
+          "evidence_id": "DEMO-02",
+          "match_type": "direct",
+          "match_score": 1.0,
+          "reason": "Built a searchable demo interface in React."
+        },
+        {
+          "id": 5,
+          "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+          "requirement": "SQL",
+          "evidence_id": "DEMO-01",
+          "match_type": "direct",
+          "match_score": 1.0,
+          "reason": "Built a Python reporting tool for a sample dataset."
+        }
+      ],
+      "gaps": [],
+      "cover_letter": "Dear Hiring Team,\n\nI am applying for the Graduate Software Engineer position at Example Labs (fictional). My background includes Software engineering and data tools. I would welcome the opportunity to discuss its relevance to your team.\n\nIn particular, Built a Python reporting tool for a sample dataset.; Built a Python reporting tool for a sample dataset.\n\nI am drawn to this opportunity because it would let me apply that practical engineering experience in a production environment while continuing to develop in the areas central to the role. I would welcome the opportunity to discuss how my background could contribute to Example Labs (fictional).\n\nKind regards,\nAlex Example",
+      "outreach": "Hi \u2014 I recently came across the Graduate Software Engineer role at Example Labs (fictional). My background includes C, Python, React. I\u2019m planning to apply and would love to connect and learn more about the team.",
+      "interview_questions": [
+        "Tell us about a time you used C in a real project.",
+        "Tell us about a time you used Python in a real project.",
+        "Tell us about a time you used React in a real project.",
+        "Walk me through the technical project you are most proud of.",
+        "Tell me about a difficult debugging problem and how you isolated the root cause."
+      ],
+      "people": [
+        {
+          "type": "Hiring manager",
+          "name": "Not confirmed",
+          "confidence": "Unverified",
+          "reason": "Needs live public-source enrichment.",
+          "search_url": "https://www.linkedin.com/search/results/people/?keywords=Example%20Labs%20%28fictional%29%20Graduate%20Software%20Engineer%20engineering%20manager"
+        },
+        {
+          "type": "Recruiter / Talent",
+          "name": "Not confirmed",
+          "confidence": "Unverified",
+          "reason": "Needs live public-source enrichment.",
+          "search_url": "https://www.linkedin.com/search/results/people/?keywords=Example%20Labs%20%28fictional%29%20recruiter%20talent%20acquisition"
+        }
+      ],
+      "gap_summary": "No major verified evidence gaps identified.",
+      "resume_plan": {
+        "headline": "Tailor toward Software / Full-stack",
+        "priority_parents": ["EXP-DEMO", "PRJ-DEMO"],
+        "skills_to_surface": ["C", "Python", "React", "TypeScript", "SQL"],
+        "do_not_add": [],
+        "bullet_rewrites": [
+          {
+            "evidence_id": "DEMO-01",
+            "suggestion": "Built a Python reporting tool \u2014 Made sample reports repeatable"
+          },
+          {
+            "evidence_id": "DEMO-01",
+            "suggestion": "Built a Python reporting tool \u2014 Made sample reports repeatable"
+          },
+          {
+            "evidence_id": "DEMO-02",
+            "suggestion": "Built a React search interface \u2014 Enabled filtering of sample records"
+          },
+          {
+            "evidence_id": "DEMO-02",
+            "suggestion": "Built a React search interface \u2014 Enabled filtering of sample records"
+          }
+        ]
+      },
+      "star_stories": [
+        {
+          "story_id": "STAR-DEMO",
+          "parent_id": "EXP-DEMO",
+          "situation": "Sample reports were inconsistent.",
+          "task": "Make reporting repeatable.",
+          "action": "Built and tested a Python tool.",
+          "result": "Repeatable sample reports.",
+          "skills": "Python; testing"
+        }
+      ],
+      "application_questions": [
+        {
+          "question": "Why are you interested in this role?",
+          "draft": "The Graduate Software Engineer role interests me because of its focus on C, Python, React. I am particularly interested in applying that experience in Example Labs (fictional)'s environment while continuing to grow in the core technologies of the role."
+        },
+        {
+          "question": "Why this company?",
+          "draft": "I am interested in Example Labs (fictional) because the role combines practical engineering ownership with the technical areas I have developed through university and industry projects. I would tailor this further once company/product intelligence is enriched from public sources."
+        },
+        {
+          "question": "Tell us about a relevant project.",
+          "draft": "Built a Python reporting tool for a sample dataset."
+        }
+      ],
+      "follow_up": {
+        "after_apply": "Send a concise recruiter/hiring-manager connection note within 1\u20132 business days if a relevant public contact is identified.",
+        "no_response": "Follow up once after roughly 5\u20137 business days unless the posting gives a different timeline.",
+        "interview": "Send a short thank-you note within 24 hours, referencing one technical discussion point."
+      }
+    },
+    "application": null,
+    "company": null,
+    "contacts": []
+  },
+  "/api/jobs/JOB-428C10C5DFF04A16AA83BCE2CE6A39AC/documents": {
+    "resume_versions": [],
+    "cover_letters": []
+  },
+  "/api/v3/jobs/JOB-428C10C5DFF04A16AA83BCE2CE6A39AC/interview-prep": {
+    "job": {
+      "id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Graduate Software Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "Python React TypeScript SQL testing required",
+      "role_family": "Software / Full-stack",
+      "seniority": "Graduate / Entry Level",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-02T04:19:45.345454+00:00",
+      "updated_at": "2026-10-02T04:19:45.348021+00:00"
+    },
+    "company_tagged": [
+      {
+        "id": 2,
+        "title": "Number of Islands",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Medium",
+        "primary_topic": "Graphs",
+        "secondary_topics": "[]",
+        "source_type": "Company-tagged prep",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.350199+00:00",
+        "companies": [
+          {
+            "id": 1,
+            "question_id": 2,
+            "company": "Example Labs (fictional)",
+            "role": "Graduate",
+            "interview_stage": "OA",
+            "source_type": "Company-tagged prep",
+            "confidence": "Reported"
+          }
+        ],
+        "attempts": []
+      }
+    ],
+    "recommended_set": [
+      {
+        "id": 2,
+        "title": "Number of Islands",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Medium",
+        "primary_topic": "Graphs",
+        "secondary_topics": "[]",
+        "source_type": "Company-tagged prep",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.350199+00:00",
+        "companies": [
+          {
+            "id": 1,
+            "question_id": 2,
+            "company": "Example Labs (fictional)",
+            "role": "Graduate",
+            "interview_stage": "OA",
+            "source_type": "Company-tagged prep",
+            "confidence": "Reported"
+          }
+        ],
+        "attempts": []
+      },
+      {
+        "id": 1,
+        "title": "Two Sum",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Easy",
+        "primary_topic": "Arrays",
+        "secondary_topics": "[]",
+        "source_type": "General practice",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.349890+00:00",
+        "companies": [],
+        "attempts": []
+      }
+    ],
+    "requirements": ["C", "Python", "React", "TypeScript", "SQL"],
+    "note": "Company-tagged prep is kept distinct from questions confirmed as asked in a real interview."
+  },
+  "/api/jobs/JOB-95ACB278C9B843F0A3361FC4EDBEA162": {
+    "job": {
+      "id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Embedded Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "C++ STM32 FreeRTOS debugging required",
+      "role_family": "Embedded / Firmware",
+      "seniority": "Experienced",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-02T04:19:45.348394+00:00",
+      "updated_at": "2026-10-02T04:19:45.349786+00:00"
+    },
+    "requirements": [
+      {
+        "id": 6,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "C++",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 7,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "C",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 8,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "STM32",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      },
+      {
+        "id": 9,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "FreeRTOS",
+        "kind": "required",
+        "weight": 1.0,
+        "hard_gate": 0,
+        "category": "technical"
+      }
+    ],
+    "match": {
+      "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+      "career_fit": 52.0,
+      "resume_fit": 45.0,
+      "potential_fit": 54.0,
+      "priority_score": 63.0,
+      "rationale": "Evidence-weighted estimate; not a hiring probability.",
+      "updated_at": "2026-10-02T04:19:45.349506+00:00"
+    },
+    "evidence_matches": [
+      {
+        "id": 7,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "C",
+        "evidence_id": "DEMO-01",
+        "match_type": "direct",
+        "match_score": 1.0,
+        "reason": "Built a Python reporting tool for a sample dataset."
+      },
+      {
+        "id": 6,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "C++",
+        "evidence_id": null,
+        "match_type": "unsupported",
+        "match_score": 0.0,
+        "reason": "No verified supporting evidence in the career database."
+      },
+      {
+        "id": 8,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "STM32",
+        "evidence_id": null,
+        "match_type": "unsupported",
+        "match_score": 0.0,
+        "reason": "No verified supporting evidence in the career database."
+      },
+      {
+        "id": 9,
+        "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+        "requirement": "FreeRTOS",
+        "evidence_id": null,
+        "match_type": "unsupported",
+        "match_score": 0.0,
+        "reason": "No verified supporting evidence in the career database."
+      }
+    ],
+    "dossier": {
+      "top_evidence": [
+        {
+          "evidence_id": "DEMO-01",
+          "parent_id": "EXP-DEMO",
+          "type": "software",
+          "raw_fact": "Built a Python reporting tool for a sample dataset.",
+          "action": "Built a Python reporting tool",
+          "result": "Made sample reports repeatable",
+          "metric": "",
+          "context": "Fictional example",
+          "technologies": "Python; SQL",
+          "competencies": "Testing",
+          "role_tags": "software",
+          "evidence_level": "supported",
+          "confidence": "high",
+          "claim_restriction": "Fictional example only; replace with your own verified evidence",
+          "source_doc": "Example fixture"
+        }
+      ],
+      "strong": [
+        {
+          "id": 7,
+          "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+          "requirement": "C",
+          "evidence_id": "DEMO-01",
+          "match_type": "direct",
+          "match_score": 1.0,
+          "reason": "Built a Python reporting tool for a sample dataset."
+        }
+      ],
+      "gaps": [
+        {
+          "id": 6,
+          "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+          "requirement": "C++",
+          "evidence_id": null,
+          "match_type": "unsupported",
+          "match_score": 0.0,
+          "reason": "No verified supporting evidence in the career database."
+        },
+        {
+          "id": 8,
+          "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+          "requirement": "STM32",
+          "evidence_id": null,
+          "match_type": "unsupported",
+          "match_score": 0.0,
+          "reason": "No verified supporting evidence in the career database."
+        },
+        {
+          "id": 9,
+          "job_id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+          "requirement": "FreeRTOS",
+          "evidence_id": null,
+          "match_type": "unsupported",
+          "match_score": 0.0,
+          "reason": "No verified supporting evidence in the career database."
+        }
+      ],
+      "cover_letter": "Dear Hiring Team,\n\nI am applying for the Embedded Engineer position at Example Labs (fictional). My background includes Software engineering and data tools. I would welcome the opportunity to discuss its relevance to your team.\n\nIn particular, Built a Python reporting tool for a sample dataset.\n\nI am drawn to this opportunity because it would let me apply that practical engineering experience in a production environment while continuing to develop in the areas central to the role. I would welcome the opportunity to discuss how my background could contribute to Example Labs (fictional).\n\nKind regards,\nAlex Example",
+      "outreach": "Hi \u2014 I recently came across the Embedded Engineer role at Example Labs (fictional). My background includes C. I\u2019m planning to apply and would love to connect and learn more about the team.",
+      "interview_questions": [
+        "Tell us about a time you used C in a real project.",
+        "You have limited direct evidence for C++. How would you ramp up quickly?",
+        "You have limited direct evidence for STM32. How would you ramp up quickly?",
+        "Walk me through the technical project you are most proud of.",
+        "Tell me about a difficult debugging problem and how you isolated the root cause."
+      ],
+      "people": [
+        {
+          "type": "Hiring manager",
+          "name": "Not confirmed",
+          "confidence": "Unverified",
+          "reason": "Needs live public-source enrichment.",
+          "search_url": "https://www.linkedin.com/search/results/people/?keywords=Example%20Labs%20%28fictional%29%20Embedded%20Engineer%20engineering%20manager"
+        },
+        {
+          "type": "Recruiter / Talent",
+          "name": "Not confirmed",
+          "confidence": "Unverified",
+          "reason": "Needs live public-source enrichment.",
+          "search_url": "https://www.linkedin.com/search/results/people/?keywords=Example%20Labs%20%28fictional%29%20recruiter%20talent%20acquisition"
+        }
+      ],
+      "gap_summary": "C++, STM32, FreeRTOS",
+      "resume_plan": {
+        "headline": "Tailor toward Embedded / Firmware",
+        "priority_parents": ["EXP-DEMO"],
+        "skills_to_surface": ["C"],
+        "do_not_add": ["C++", "STM32", "FreeRTOS"],
+        "bullet_rewrites": [
+          {
+            "evidence_id": "DEMO-01",
+            "suggestion": "Built a Python reporting tool \u2014 Made sample reports repeatable"
+          }
+        ]
+      },
+      "star_stories": [
+        {
+          "story_id": "STAR-DEMO",
+          "parent_id": "EXP-DEMO",
+          "situation": "Sample reports were inconsistent.",
+          "task": "Make reporting repeatable.",
+          "action": "Built and tested a Python tool.",
+          "result": "Repeatable sample reports.",
+          "skills": "Python; testing"
+        }
+      ],
+      "application_questions": [
+        {
+          "question": "Why are you interested in this role?",
+          "draft": "The Embedded Engineer role interests me because of its focus on C. I am particularly interested in applying that experience in Example Labs (fictional)'s environment while continuing to grow in the core technologies of the role."
+        },
+        {
+          "question": "Why this company?",
+          "draft": "I am interested in Example Labs (fictional) because the role combines practical engineering ownership with the technical areas I have developed through university and industry projects. I would tailor this further once company/product intelligence is enriched from public sources."
+        },
+        {
+          "question": "Tell us about a relevant project.",
+          "draft": "Built a Python reporting tool for a sample dataset."
+        }
+      ],
+      "follow_up": {
+        "after_apply": "Send a concise recruiter/hiring-manager connection note within 1\u20132 business days if a relevant public contact is identified.",
+        "no_response": "Follow up once after roughly 5\u20137 business days unless the posting gives a different timeline.",
+        "interview": "Send a short thank-you note within 24 hours, referencing one technical discussion point."
+      }
+    },
+    "application": null,
+    "company": null,
+    "contacts": []
+  },
+  "/api/jobs/JOB-95ACB278C9B843F0A3361FC4EDBEA162/documents": {
+    "resume_versions": [],
+    "cover_letters": []
+  },
+  "/api/v3/jobs/JOB-95ACB278C9B843F0A3361FC4EDBEA162/interview-prep": {
+    "job": {
+      "id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Embedded Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "C++ STM32 FreeRTOS debugging required",
+      "role_family": "Embedded / Firmware",
+      "seniority": "Experienced",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-02T04:19:45.348394+00:00",
+      "updated_at": "2026-10-02T04:19:45.349786+00:00"
+    },
+    "company_tagged": [
+      {
+        "id": 2,
+        "title": "Number of Islands",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Medium",
+        "primary_topic": "Graphs",
+        "secondary_topics": "[]",
+        "source_type": "Company-tagged prep",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.350199+00:00",
+        "companies": [
+          {
+            "id": 1,
+            "question_id": 2,
+            "company": "Example Labs (fictional)",
+            "role": "Graduate",
+            "interview_stage": "OA",
+            "source_type": "Company-tagged prep",
+            "confidence": "Reported"
+          }
+        ],
+        "attempts": []
+      }
+    ],
+    "recommended_set": [
+      {
+        "id": 2,
+        "title": "Number of Islands",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Medium",
+        "primary_topic": "Graphs",
+        "secondary_topics": "[]",
+        "source_type": "Company-tagged prep",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.350199+00:00",
+        "companies": [
+          {
+            "id": 1,
+            "question_id": 2,
+            "company": "Example Labs (fictional)",
+            "role": "Graduate",
+            "interview_stage": "OA",
+            "source_type": "Company-tagged prep",
+            "confidence": "Reported"
+          }
+        ],
+        "attempts": []
+      },
+      {
+        "id": 1,
+        "title": "Two Sum",
+        "platform": "LeetCode",
+        "leetcode_number": null,
+        "url": null,
+        "difficulty": "Easy",
+        "primary_topic": "Arrays",
+        "secondary_topics": "[]",
+        "source_type": "General practice",
+        "asked_in_real_interview": 0,
+        "notes": null,
+        "created_at": "2026-10-02T04:19:45.349890+00:00",
+        "companies": [],
+        "attempts": []
+      }
+    ],
+    "requirements": ["C++", "C", "STM32", "FreeRTOS"],
+    "note": "Company-tagged prep is kept distinct from questions confirmed as asked in a real interview."
+  }
+}

@@ -1,0 +1,25 @@
+# Private data and credentials
+.private/
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+*.sqlite*
+app/data/*
+!app/data/.gitkeep
+# Generated files
+app/static/
+**/node_modules/
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/test-results/
+**/playwright-report/
+**/.coverage
+**/*.egg-info/
+qa/
+.DS_Store
+
+.ruff_cache/
+**/dist/

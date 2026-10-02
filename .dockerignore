@@ -1,0 +1,26 @@
+# Only source needed to build and run can enter the image.
+**
+!Dockerfile
+!alembic.ini
+!scripts/
+!scripts/start.sh
+!app/
+!app/*.py
+!app/requirements.txt
+!app/services/
+!app/services/*.py
+!app/adapters/
+!app/adapters/*.py
+!app/migrations/
+!app/migrations/*.py
+!app/migrations/versions/
+!app/migrations/versions/*.py
+!frontend/
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/index.html
+!frontend/vite.config.js
+!frontend/src/
+!frontend/src/**
+frontend/src/*.test.*
+frontend/src/test-*

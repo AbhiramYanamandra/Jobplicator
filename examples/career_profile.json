@@ -1,0 +1,10 @@
+{
+ "version":"2.0",
+ "profile":[{"Field":"Name","Value":"Alex Example"},{"Field":"Location","Value":"Example City"},{"Field":"Degree","Value":"BSc Computer Science"},{"Field":"Primary positioning","Value":"Software engineering and data tools"}],
+ "experiences":[{"experience_id":"EXP-DEMO","organisation":"Example Labs (fictional)","role":"Software Engineer","location":"Example City","start":"2024","end":"2025","summary":"Built internal software tools.","technologies":"Python; React; SQL"}],
+ "projects":[{"project_id":"PRJ-DEMO","project":"Demo Search Tool","course_or_context":"Sample project","technologies":"Python; SQL"}],
+ "evidence":[{"evidence_id":"DEMO-01","parent_id":"EXP-DEMO","type":"software","raw_fact":"Built a Python reporting tool for a sample dataset.","action":"Built a Python reporting tool","result":"Made sample reports repeatable","metric":"","context":"Fictional example","technologies":"Python; SQL","competencies":"Testing","role_tags":"software","evidence_level":"supported","confidence":"high","claim_restriction":"Fictional example only; replace with your own verified evidence","source_doc":"Example fixture"},{"evidence_id":"DEMO-02","parent_id":"PRJ-DEMO","type":"project","raw_fact":"Built a searchable demo interface in React.","action":"Built a React search interface","result":"Enabled filtering of sample records","metric":"","technologies":"React; TypeScript","evidence_level":"supported","claim_restriction":"Fictional example only"}],
+ "skills":[{"skill":"Python","category":"Programming","evidence_strength":"Strong"}],
+ "star_stories":[{"story_id":"STAR-DEMO","parent_id":"EXP-DEMO","situation":"Sample reports were inconsistent.","task":"Make reporting repeatable.","action":"Built and tested a Python tool.","result":"Repeatable sample reports.","skills":"Python; testing"}],
+ "metrics":[],"coursework":[],"sources":[],"conflicts":[],"role_mapping":[]
+}

@@ -1,0 +1,17 @@
+# Architecture
+
+React 19 and Chakra UI 3 render all active pages. Vite compiles into `app/static`; FastAPI serves the UI and API on one origin. Hash routes support refresh without a frontend routing server. Docker builds from source. No business data is baked into the image.
+
+Supabase handles email/password sessions and recovery. The browser sends its bearer access token with each API request. FastAPI verifies ES256/RS256 signatures, issuer, audience, expiry, authenticated role, non-anonymous status and the configured user allow-list. The browser never receives the database connection. Every protected request opens a transaction and an owner-bound SQLAlchemy repository. Repository reads, writes, joins and conflict updates explicitly include the verified owner. Composite foreign keys prevent cross-account parent references. Profile/evidence JSON and resume drafts live in the same account-owned database.
+
+PostgreSQL tables live in a private `jobplicator` schema, excluded from Supabase Data API and inaccessible to its anon/authenticated roles. This uses backend-enforced account isolation, not a claim of browser-facing RLS policies. The database server credential is privileged and must stay server-side. For new personal deployments the configured connection also migrates; an optional separate migration URL allows narrower runtime privileges later.
+
+Alembic manages the schema. Version 0001 has a frozen schema definition so future model edits do not mutate migration history. Startup migration uses a PostgreSQL session advisory lock; normal account edits use transaction advisory locks for version allocation, resume compare-and-swap and imports. Startup checks schema revision; it never resets data or loads samples. SQLite remains an explicitly local development option and test target.
+
+The legacy importer opens SQLite read-only, checks integrity, writes in dependency order, remaps integer identities, verifies relationships/counts, and commits everything atomically. Imports require empty domain tables. Original files remain untouched. A fingerprint makes replays idempotent. Profile/draft inputs remain private and are excluded from Git and Docker.
+
+React's auth boundary gates the workspace and remounts it on account changes. Draft recovery and target selection use account-specific storage keys. Cloud resume saves include a revision; stale revisions return 409 without overwriting another device. Recovery copies are preserved until restored/discarded or a successful cloud operation. Theme/sidebar preferences are device-local. Tokens are managed by Supabase's browser client. There is no service-role key in client configuration.
+
+The original v3 scoring/analytics behavior is retained through repository access. Profile-derived matching replaces original embedded personal data. Generic URL imports are opt-in, and all enabled HTTP adapters validate public DNS destinations, pin the selected IP, preserve TLS hostname verification, revalidate redirects, and bound timeout/response size. Provider-authorized integrations remain required where originally unavailable.
+
+Runtime entry point: `uvicorn app:create_app --factory --app-dir app`. `.env` is loaded only on the server; Render uses environment settings. Production rejects local auth, SQLite, missing invite list, non-HTTPS app URLs and disabled database TLS. Request bodies are limited to 1 MB; database errors do not return connection details.
