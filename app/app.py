@@ -23,7 +23,7 @@ from schemas import (
     DraftIn,
 )
 from profile_store import get_profile, get_evidence, save_profile
-from services.jobs import add_job, assess_job
+from services.jobs import add_job, assess_job, score_unscored
 from services.intelligence import dossier
 from services.v3 import (
     cluster_data,
@@ -97,6 +97,7 @@ def evidence(search: str = "", level: str = ""):
 
 @api.get("/jobs")
 def jobs(search: str = "", role: str = "", status: str = ""):
+    score_unscored()
     return clean(
         [
             j
@@ -118,6 +119,10 @@ def jobs(search: str = "", role: str = "", status: str = ""):
 def job_detail(job_id: str):
     r = repo()
     j = require("jobs", id=job_id)
+    if r.one("job_matches", job_id=job_id) is None and j.get("description_raw"):
+        # Jobs inserted directly by the scheduled sync have not been scored yet.
+        assess_job(j)
+        j = require("jobs", id=job_id)
     req = r.all("job_requirements", job_id=job_id)
     matches = r.all("evidence_matches", job_id=job_id, order=["-match_score"])
     match = r.one("job_matches", job_id=job_id) or {}

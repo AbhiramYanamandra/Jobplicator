@@ -70,7 +70,7 @@ ROLE_MAP = [
 
 
 def parse_job(job):
-    text = (job.get("title", "") + " " + job.get("description_raw", "")).lower()
+    text = ((job.get("title") or "") + " " + (job.get("description_raw") or "")).lower()
     role = "General Engineering"
     for r, keys in ROLE_MAP:
         if any(k in text for k in keys):
@@ -196,8 +196,8 @@ def dossier(job, reqs, score):
     top_ids = [m["evidence_id"] for m in strong[:4] if m["evidence_id"]]
     evmap = {e["evidence_id"]: e for e in get_evidence()}
     top = [evmap[x] for x in top_ids if x in evmap]
-    company = job.get("company", "the company")
-    title = job.get("title", "the role")
+    company = job.get("company") or "the company"
+    title = job.get("title") or "the role"
     strengths = (
         "; ".join(e["raw_fact"] for e in top[:2])
         or "Add relevant, verified career evidence to personalize this section."
@@ -271,7 +271,7 @@ def dossier(job, reqs, score):
     # STAR story selection from the master database.
     stars = []
     role_words = " ".join(
-        [job.get("role_family", ""), title, job.get("description_raw", "")]
+        [job.get("role_family") or "", title, job.get("description_raw") or ""]
     ).lower()
     for st in get_profile().get("star_stories", []):
         txt = (

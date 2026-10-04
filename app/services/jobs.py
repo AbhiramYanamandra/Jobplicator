@@ -57,3 +57,18 @@ def add_job(values):
     repo().insert("jobs", job)
     assess_job(job)
     return job["id"]
+
+
+def score_unscored():
+    """Score jobs inserted straight into the database (e.g. by the scheduled
+    Claude agent via Supabase), which have no match row yet."""
+    r = repo()
+    scored = {m["job_id"] for m in r.all("job_matches")}
+    count = 0
+    for job in r.all("jobs"):
+        if job["id"] in scored or not job.get("description_raw"):
+            continue
+        with r.connection.begin_nested():
+            assess_job(job)
+        count += 1
+    return count
