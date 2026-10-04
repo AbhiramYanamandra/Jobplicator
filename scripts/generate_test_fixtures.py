@@ -29,6 +29,8 @@ with tempfile.TemporaryDirectory(prefix="jobplicator-fixtures-") as temp:
         with use_repository(c, LOCAL_OWNER):
             seed_demo()
     with TestClient(create_app(settings, engine)) as c:
+        first_job = c.get("/api/jobs").json()[0]["id"]
+        c.post(f"/api/jobs/{first_job}/package/draft")
         paths = [
             "/api/profile",
             "/api/jobs",
@@ -47,6 +49,7 @@ with tempfile.TemporaryDirectory(prefix="jobplicator-fixtures-") as temp:
             "/api/v3/scoring-weights",
             "/api/v3/weekly-report",
             "/api/resume-draft",
+            "/api/packages",
             "/api/me",
             "/api/config",
         ]
@@ -56,6 +59,7 @@ with tempfile.TemporaryDirectory(prefix="jobplicator-fixtures-") as temp:
                 f"/api/jobs/{job['id']}",
                 f"/api/jobs/{job['id']}/documents",
                 f"/api/v3/jobs/{job['id']}/interview-prep",
+                f"/api/jobs/{job['id']}/package",
             ]:
                 fixtures[p] = c.get(p).json()
     (ROOT / "frontend/src/test-fixtures.json").write_text(

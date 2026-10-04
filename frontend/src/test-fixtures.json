@@ -1450,5 +1450,219 @@
     ],
     "requirements": ["C++", "C", "STM32", "FreeRTOS"],
     "note": "Company-tagged prep is kept distinct from questions confirmed as asked in a real interview."
+  },
+  "/api/packages": {
+    "packages": [
+      {
+        "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+        "title": "Graduate Software Engineer",
+        "company": "Example Labs (fictional)",
+        "location": "Example City",
+        "source": "Fictional demo",
+        "version": 1,
+        "status": "draft",
+        "package_source": "evidence-template",
+        "fit": 98,
+        "ats": null,
+        "errors": 0,
+        "warnings": 0,
+        "application_status": null,
+        "follow_up_date": null,
+        "updated_at": "2026-10-04T14:08:37.114983+00:00"
+      }
+    ],
+    "jobs_without_package": 1
+  },
+  "/api/jobs/JOB-428C10C5DFF04A16AA83BCE2CE6A39AC/package": {
+    "job": {
+      "id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Graduate Software Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "Python React TypeScript SQL testing required",
+      "role_family": "Software / Full-stack",
+      "seniority": "Graduate / Entry Level",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-04T14:08:37.019903+00:00",
+      "updated_at": "2026-10-04T14:08:37.030847+00:00"
+    },
+    "package": {
+      "id": 1,
+      "job_id": "JOB-428C10C5DFF04A16AA83BCE2CE6A39AC",
+      "version": 1,
+      "status": "draft",
+      "source": "evidence-template",
+      "content": {
+        "scores": {
+          "fit": 98,
+          "ats": null,
+          "summary": "Keyword fit from the evidence database. ATS scoring arrives with the AI generator.",
+          "strengths": ["C", "Python", "React", "TypeScript", "SQL"],
+          "gaps": []
+        },
+        "resume": {
+          "variant": "",
+          "summary": {
+            "text": "Software engineering and data tools",
+            "evidence_ids": []
+          },
+          "skills": [],
+          "education": {
+            "institution": "",
+            "degree": "BSc Computer Science",
+            "dates": "",
+            "details": ""
+          },
+          "experience": [
+            {
+              "parent_id": "EXP-DEMO",
+              "title": "Software Engineer",
+              "org": "Example Labs (fictional)",
+              "location": "Example City",
+              "dates": "2024 \u2013 2025",
+              "bullets": [
+                {
+                  "text": "Built a Python reporting tool for a sample dataset.",
+                  "evidence_ids": ["DEMO-01"]
+                }
+              ]
+            }
+          ],
+          "projects": [
+            {
+              "parent_id": "PRJ-DEMO",
+              "title": "Demo Search Tool",
+              "org": "Sample project",
+              "location": "",
+              "dates": "",
+              "bullets": [
+                {
+                  "text": "Built a searchable demo interface in React.",
+                  "evidence_ids": ["DEMO-02"]
+                }
+              ]
+            }
+          ]
+        },
+        "cover_letter": "Dear Hiring Team,\n\nI am applying for the Graduate Software Engineer position at Example Labs (fictional). My background includes Software engineering and data tools. I would welcome the opportunity to discuss its relevance to your team.\n\nIn particular, Built a Python reporting tool for a sample dataset.; Built a Python reporting tool for a sample dataset.\n\nI am drawn to this opportunity because it would let me apply that practical engineering experience in a production environment while continuing to develop in the areas central to the role. I would welcome the opportunity to discuss how my background could contribute to Example Labs (fictional).\n\nKind regards,\nAlex Example",
+        "answers": [
+          {
+            "question": "Why are you interested in this role?",
+            "answer": "The Graduate Software Engineer role interests me because of its focus on C, Python, React. I am particularly interested in applying that experience in Example Labs (fictional)'s environment while continuing to grow in the core technologies of the role.",
+            "evidence_ids": []
+          },
+          {
+            "question": "Why this company?",
+            "answer": "I am interested in Example Labs (fictional) because the role combines practical engineering ownership with the technical areas I have developed through university and industry projects. I would tailor this further once company/product intelligence is enriched from public sources.",
+            "evidence_ids": []
+          },
+          {
+            "question": "Tell us about a relevant project.",
+            "answer": "Built a Python reporting tool for a sample dataset.",
+            "evidence_ids": []
+          }
+        ],
+        "outreach": {
+          "hiring_manager": "Not confirmed",
+          "linkedin_query": "Example Labs (fictional) engineering manager Example City",
+          "linkedin_message": "Hi \u2014 I recently came across the Graduate Software Engineer role at Example Labs (fictional). My background includes C, Python, React. I\u2019m planning to apply and would love to connect and learn more about the team.",
+          "email": ""
+        },
+        "notes": "Starter draft built only from verbatim evidence. Rewrite wording freely; keep the evidence citations."
+      },
+      "checks": {
+        "flags": [],
+        "errors": 0,
+        "warnings": 0,
+        "checked_at": "2026-10-04T14:08:37.114965+00:00"
+      },
+      "created_at": "2026-10-04T14:08:37.114983+00:00",
+      "updated_at": "2026-10-04T14:08:37.114983+00:00"
+    },
+    "versions": [
+      {
+        "version": 1,
+        "status": "draft",
+        "source": "evidence-template",
+        "created_at": "2026-10-04T14:08:37.114983+00:00"
+      }
+    ],
+    "evidence": {
+      "DEMO-01": {
+        "evidence_id": "DEMO-01",
+        "parent_id": "EXP-DEMO",
+        "raw_fact": "Built a Python reporting tool for a sample dataset.",
+        "metric": "",
+        "evidence_level": "supported",
+        "confidence": "high",
+        "claim_restriction": "Fictional example only; replace with your own verified evidence"
+      },
+      "DEMO-02": {
+        "evidence_id": "DEMO-02",
+        "parent_id": "PRJ-DEMO",
+        "raw_fact": "Built a searchable demo interface in React.",
+        "metric": "",
+        "evidence_level": "supported",
+        "confidence": null,
+        "claim_restriction": "Fictional example only"
+      }
+    },
+    "header": {
+      "name": "Alex Example",
+      "email": "",
+      "location": "Example City",
+      "work_rights": "",
+      "degree": "BSc Computer Science",
+      "study_period": "",
+      "wam": ""
+    },
+    "application": null
+  },
+  "/api/jobs/JOB-95ACB278C9B843F0A3361FC4EDBEA162/package": {
+    "job": {
+      "id": "JOB-95ACB278C9B843F0A3361FC4EDBEA162",
+      "source": "Fictional demo",
+      "source_url": null,
+      "company": "Example Labs (fictional)",
+      "title": "Embedded Engineer",
+      "location": "Example City",
+      "country": null,
+      "work_mode": null,
+      "employment_type": null,
+      "salary": null,
+      "posted_at": null,
+      "closing_date": null,
+      "description_raw": "C++ STM32 FreeRTOS debugging required",
+      "role_family": "Embedded / Firmware",
+      "seniority": "Experienced",
+      "industry": null,
+      "work_rights": null,
+      "status": "discovered",
+      "created_at": "2026-10-04T14:08:37.032126+00:00",
+      "updated_at": "2026-10-04T14:08:37.037748+00:00"
+    },
+    "package": null,
+    "versions": [],
+    "evidence": {},
+    "header": {
+      "name": "Alex Example",
+      "email": "",
+      "location": "Example City",
+      "work_rights": "",
+      "degree": "BSc Computer Science",
+      "study_period": "",
+      "wam": ""
+    },
+    "application": null
   }
 }

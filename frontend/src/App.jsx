@@ -34,6 +34,7 @@ import {
   PanelLeftOpen,
   LogOut,
   Settings,
+  Package,
 } from "lucide-react";
 import {
   api,
@@ -65,11 +66,13 @@ import { QuestionBank, InterviewPrep } from "./questions";
 import ResumeStudio from "./resume";
 import { useAuth } from "./auth";
 import Profile from "./profile";
+import { Packages, PackagePage } from "./packages";
 const nav = [
   ["dashboard", "Dashboard", LayoutDashboard],
   ["jobs", "Jobs", Briefcase],
   ["clusters", "Clusters", Network],
   ["applications", "Applications", Columns3],
+  ["packages", "Packages", Package],
   ["resume", "Resume Studio", FileText],
   ["evidence", "Evidence", ShieldCheck],
   ["analytics", "Analytics", ChartNoAxesCombined],
@@ -142,12 +145,15 @@ export default function App() {
   let content;
   if (page.startsWith("job/"))
     content = <Dossier key={page} id={page.slice(4)} {...props} />;
+  else if (page.startsWith("package/"))
+    content = <PackagePage key={page} id={page.slice(8)} {...props} />;
   else
     content = {
       dashboard: <Dashboard {...props} />,
       jobs: <Jobs {...props} />,
       clusters: <Clusters {...props} />,
       applications: <Applications {...props} />,
+      packages: <Packages {...props} />,
       resume: <ResumeStudio {...props} />,
       evidence: <Evidence {...props} />,
       analytics: <Analytics {...props} />,
@@ -242,7 +248,7 @@ export default function App() {
         <Stack gap="1">
           {nav.map(([id, label, Icon], i) => (
             <React.Fragment key={id}>
-              {[4, 7].includes(i) && (
+              {[5, 8].includes(i) && (
                 <Box h="1px" bg="#ffffff12" my="3" mx="3" />
               )}
               <Button
@@ -371,7 +377,9 @@ export default function App() {
               <span style={{ color: "var(--chakra-colors-ink)" }}>
                 {page.startsWith("job/")
                   ? "Job dossier"
-                  : nav.find((n) => n[0] === page)?.[1] || "Import jobs"}
+                  : page.startsWith("package/")
+                    ? "Application package"
+                    : nav.find((n) => n[0] === page)?.[1] || "Import jobs"}
               </span>
             </Text>
           </Flex>

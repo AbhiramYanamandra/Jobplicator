@@ -39,10 +39,12 @@ from adapters.greenhouse import GreenhouseAdapter
 from adapters.lever import LeverAdapter
 from adapters.generic_url import GenericURLAdapter
 from adapters.registry import ADAPTERS
+from package_routes import router as package_router
 from urllib.parse import urlsplit
 from uuid import UUID
 
 ROOT = Path(__file__).resolve().parent
+SCHEMA_REVISION = "0002_application_packages"
 log = logging.getLogger("jobplicator")
 api = APIRouter(prefix="/api", dependencies=[Depends(workspace)])
 
@@ -551,7 +553,7 @@ def create_app(settings=None, engine=None, verifier=None):
             revision = con.execute(
                 text(f"SELECT version_num FROM {prefix}alembic_version")
             ).scalar()
-            if revision != "0001_owned_workspace":
+            if revision != SCHEMA_REVISION:
                 raise RuntimeError("Database migration required: alembic upgrade head")
         yield
 
@@ -668,6 +670,7 @@ def create_app(settings=None, engine=None, verifier=None):
         }
 
     app.include_router(api)
+    app.include_router(package_router)
     static = ROOT / "static"
     app.mount("/static", StaticFiles(directory=static, check_dir=False), name="static")
 

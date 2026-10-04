@@ -54,6 +54,7 @@ const pages = [
   ["jobs", "Find the right fit."],
   ["clusters", "See the bigger picture."],
   ["applications", "Keep every door in view."],
+  ["packages", "Your application packages."],
   ["resume", "Make your experience count."],
   ["evidence", "Let your work speak."],
   ["analytics", "Turn experience into insight."],
@@ -568,5 +569,63 @@ it("saves a cloud draft with its revision and preserves edits on a conflict", as
   await screen.findByText("The draft was updated elsewhere.");
   expect(screen.getByLabelText("Professional summary")).toHaveValue(
     "Keep my later edits",
+  );
+});
+
+it("lists packages and saves an edited package as a new version", async () => {
+  const user = userEvent.setup();
+  const row = fixtures["/api/packages"].packages[0];
+  show("packages");
+  await user.click(await screen.findByRole("button", { name: row.title }));
+  expect(
+    await screen.findByRole("heading", { name: row.title }),
+  ).toBeInTheDocument();
+  const field = screen.getAllByRole("textbox", { name: /bullet 1$/ })[0];
+  expect(field.value).toBe(
+    "Built a Python reporting tool for a sample dataset.",
+  );
+  expect(
+    screen.getAllByRole("button", { name: "Remove evidence DEMO-01" }).length,
+  ).toBeGreaterThan(0);
+  const save = screen.getByRole("button", { name: /Save as new version/ });
+  expect(save).toBeDisabled();
+  await user.clear(field);
+  await user.type(field, "Built a Python reporting tool.");
+  expect(save).toBeEnabled();
+  expect(screen.getByRole("button", { name: /Approve/ })).toBeDisabled();
+  await user.click(save);
+  await waitFor(() => {
+    const post = calls.find(
+      (c) =>
+        c.path === `/api/jobs/${row.job_id}/package` &&
+        c.options?.method === "POST",
+    );
+    expect(post).toBeTruthy();
+    const body = JSON.parse(post.options.body);
+    expect(body.source).toBe("manual");
+    expect(body.content.resume.experience[0].bullets[0]).toEqual({
+      text: "Built a Python reporting tool.",
+      evidence_ids: ["DEMO-01"],
+    });
+  });
+});
+
+it("offers to build a package for a job that has none", async () => {
+  const user = userEvent.setup();
+  const job = fixtures["/api/jobs"].find(
+    (j) => !fixtures[`/api/jobs/${j.id}/package`].package,
+  );
+  show(`package/${job.id}`);
+  await user.click(
+    await screen.findByRole("button", { name: /Create package from evidence/ }),
+  );
+  await waitFor(() =>
+    expect(
+      calls.some(
+        (c) =>
+          c.path === `/api/jobs/${job.id}/package/draft` &&
+          c.options?.method === "POST",
+      ),
+    ).toBe(true),
   );
 });

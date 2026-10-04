@@ -86,7 +86,7 @@ function variants(e) {
     },
   ];
 }
-const printCSS = `@page{size:A4;margin:0}*{box-sizing:border-box}body{margin:0;color:#000;background:#fff}.resume-sheet{font-family:'Times New Roman',serif;width:210mm;min-height:297mm;padding:5mm 12.7mm 12.7mm;font-size:9pt;line-height:1.05}header{text-align:center;margin-bottom:2pt}header h1{font-size:15pt;margin:0}header p{font-size:10pt;margin:0}section{margin-top:2pt}h2{font-size:9pt;font-weight:bold;border-bottom:.7pt solid black;margin:0 0 1pt}h3{font-size:9pt;margin:0}p,li{margin:0}ul{padding-left:17pt;margin:0}.resume-row{display:flex;justify-content:space-between;gap:8pt}.resume-row em{white-space:nowrap;font-weight:bold}.resume-item{margin-bottom:2pt;break-inside:avoid}.resume-skill{padding-left:12pt}`;
+export const printCSS = `@page{size:A4;margin:0}*{box-sizing:border-box}body{margin:0;color:#000;background:#fff}.resume-sheet{font-family:'Times New Roman',serif;width:210mm;min-height:297mm;padding:5mm 12.7mm 12.7mm;font-size:9pt;line-height:1.05}header{text-align:center;margin-bottom:2pt}header h1{font-size:15pt;margin:0}header p{font-size:10pt;margin:0}section{margin-top:2pt}h2{font-size:9pt;font-weight:bold;border-bottom:.7pt solid black;margin:0 0 1pt}h3{font-size:9pt;margin:0}p,li{margin:0}ul{padding-left:17pt;margin:0}.resume-row{display:flex;justify-content:space-between;gap:8pt}.resume-row em{white-space:nowrap;font-weight:bold}.resume-item{margin-bottom:2pt;break-inside:avoid}.resume-skill{padding-left:12pt}`;
 export default function ResumeStudio(props) {
   const cloud = useData("/api/resume-draft");
   const { user } = useAuth();

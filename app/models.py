@@ -1129,3 +1129,27 @@ TABLES["legacy_imports"] = Table(
     Column("counts", JSON, nullable=False),
     Column("created_at", Text, nullable=False),
 )
+# Application packages (one per job version): tailored resume, cover letter,
+# answers, outreach and evidence checks. Added in migration 0002.
+TABLES["application_packages"] = Table(
+    "application_packages",
+    metadata,
+    Column("owner_id", String(36), nullable=False, index=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("job_id", Text, nullable=False),
+    Column("version", Integer, nullable=False),
+    Column("status", Text, nullable=False),
+    Column("source", Text, nullable=False),
+    Column("content", JSON, nullable=False),
+    Column("checks", JSON, nullable=False),
+    Column("created_at", Text, nullable=False),
+    Column("updated_at", Text, nullable=False),
+    UniqueConstraint("owner_id", "id", name="uq_application_packages_owner_key"),
+    UniqueConstraint("owner_id", "job_id", "version", name="uq_application_package_version"),
+    ForeignKeyConstraint(
+        ["owner_id", "job_id"],
+        ["jobplicator.jobs.owner_id", "jobplicator.jobs.id"],
+        ondelete="CASCADE",
+        name="fk_application_packages_owned_parent",
+    ),
+)

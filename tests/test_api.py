@@ -24,6 +24,7 @@ READ_ROUTES = [
     "/api/v3/scoring-weights",
     "/api/v3/weekly-report",
     "/api/resume-draft",
+    "/api/packages",
 ]
 
 

@@ -640,6 +640,14 @@ export function Dossier({ id, revision, open, go, saved }) {
                 <Button
                   colorPalette="green"
                   size="sm"
+                  onClick={() => go(`package/${id}`)}
+                >
+                  Open package
+                  <ArrowRight size={15} />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     sessionStorage.setItem(`jobplicator-target:${user.id}`, id);
                     go("resume");
