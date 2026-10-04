@@ -198,9 +198,10 @@ def verify(content: dict, profile: dict | None = None) -> dict:
             restriction = (e.get("claim_restriction") or "").lower()
             if "team result" in restriction and "team" not in lowered:
                 flag("warning", where, f"{e['evidence_id']} is a team result; say so in the wording.")
-            if restriction.startswith("do not") or "do not use" in restriction:
+            if re.fullmatch(r"do not use\.?( by default\.?)?", restriction.strip()):
                 flag("error", where, f"{e['evidence_id']} is restricted: {e.get('claim_restriction')}")
-            elif "use only if" in restriction:
+            elif restriction.startswith("do not") or "use only if" in restriction:
+                # Scoped restriction ("Do not claim exact time saving..."): a person must judge it.
                 flag("warning", where, f"{e['evidence_id']}: {e.get('claim_restriction')}")
 
     resume = content.get("resume", {})
@@ -235,6 +236,36 @@ def latest(job_id, version=None):
         return r.one("application_packages", job_id=job_id, version=version)
     rows = r.all("application_packages", job_id=job_id, order=["-version"], limit=1)
     return rows[0] if rows else None
+
+
+def ensure_checked(row):
+    """Normalise a stored package and run checks if the writer left them pending.
+
+    The scheduled Claude generator writes rows straight into the database with
+    checks {"pending": true}; the authoritative evidence check runs here, the
+    first time the site reads the row. Malformed generator output is reported
+    as a check error instead of breaking the page."""
+    if not row:
+        return row
+    row = dict(row)
+    try:
+        normalised = PackageContent.model_validate(row["content"]).model_dump()
+        problem = None
+    except Exception as exc:  # pydantic.ValidationError, TypeError for non-dicts
+        normalised = PackageContent(notes="The generated package could not be read; regenerate it.").model_dump()
+        problem = str(exc).splitlines()[0][:300]
+    checks = row.get("checks") or {}
+    if checks.get("pending") or "flags" not in checks:
+        if problem:
+            checks = {"flags": [{"severity": "error", "where": "Package",
+                                 "message": f"Generated package does not match the expected format: {problem}"}],
+                      "errors": 1, "warnings": 0, "checked_at": now()}
+        else:
+            checks = verify(normalised)
+        repo().update("application_packages", {"checks": checks}, id=row["id"])
+        row["checks"] = checks
+    row["content"] = normalised
+    return row
 
 
 def save(job_id, content: dict, source: str):

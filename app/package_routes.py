@@ -29,6 +29,7 @@ def list_packages():
     newest = {}
     for p in r.all("application_packages", order=["job_id", "-version"]):
         newest.setdefault(p["job_id"], p)
+    newest = {k: packages.ensure_checked(v) for k, v in newest.items()}
     out = []
     for job_id, p in newest.items():
         j = jobs.get(job_id, {})
@@ -51,7 +52,7 @@ def list_packages():
 def get_package(job_id: str, version: int | None = None):
     job = _job(job_id)
     r = repo()
-    current = packages.latest(job_id, version)
+    current = packages.ensure_checked(packages.latest(job_id, version))
     if version is not None and current is None:
         raise HTTPException(404, "Package version not found")
     versions = [

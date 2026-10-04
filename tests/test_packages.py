@@ -126,3 +126,46 @@ def test_rejects_malformed_package(client):
     bad = {"content": {"resume": {"experience": [{"bullets": [{"text": "x", "evidence_ids": "EV-1"}]}]}}}
     assert client.post(f"/api/jobs/{jid}/package", json=bad).status_code == 422
     assert client.post(f"/api/jobs/{jid}/package", json={"content": {}, "extra": 1}).status_code == 422
+
+
+def _insert_raw(engine, owner, job_id, content, version=1):
+    from sqlalchemy import insert
+    from models import TABLES
+    with engine.begin() as c:
+        c.execute(insert(TABLES["application_packages"]).values(
+            owner_id=owner, job_id=job_id, version=version, status="draft", source="claude",
+            content=content, checks={"pending": True},
+            created_at="2026-10-05T00:00:00+00:00", updated_at="2026-10-05T00:00:00+00:00"))
+
+
+def test_generator_rows_are_checked_on_first_read(client, engine):
+    from conftest import OWNER_A
+    client.post("/api/profile", json=PROFILE)
+    jid = job(client)
+    # Generator output may omit optional sections; it must still render.
+    _insert_raw(engine, OWNER_A, jid, {"resume": {"experience": [{"parent_id": "EXP-A", "title": "Firmware Engineer",
+        "bullets": [{"text": "Raised coverage by 35%.", "evidence_ids": ["EV-2"]}]}]},
+        "scores": {"fit": 81, "ats": 74}})
+    listing = client.get("/api/packages").json()["packages"][0]
+    assert listing["ats"] == 74 and listing["errors"] == 1
+    detail = client.get(f"/api/jobs/{jid}/package").json()
+    pkg = detail["package"]
+    assert pkg["source"] == "claude" and "pending" not in pkg["checks"]
+    assert any("'35'" in f["message"] for f in pkg["checks"]["flags"])
+    assert pkg["content"]["cover_letter"] == "" and pkg["content"]["answers"] == []
+    from models import TABLES
+    from sqlalchemy import select
+    with engine.connect() as c:
+        stored = c.execute(select(TABLES["application_packages"].c.checks)).scalar()
+    assert stored["errors"] == 1  # persisted, not recomputed every time
+
+
+def test_malformed_generator_output_is_reported_not_crashing(client, engine):
+    from conftest import OWNER_A
+    client.post("/api/profile", json=PROFILE)
+    jid = job(client)
+    _insert_raw(engine, OWNER_A, jid, {"resume": {"experience": "not a list"}, "surprise": 1})
+    detail = client.get(f"/api/jobs/{jid}/package").json()
+    assert detail["package"]["checks"]["errors"] == 1
+    assert "expected format" in detail["package"]["checks"]["flags"][0]["message"]
+    assert detail["package"]["content"]["resume"]["experience"] == []
