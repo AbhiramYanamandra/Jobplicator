@@ -4,7 +4,7 @@ Supabase project_id: edrmxwwbawkavymmxqdu. Owner id (always this exact value): d
 
 ## Step 1: Load the evidence database
 select content from jobplicator.profiles where owner_id='d665eb9c-add5-41f0-9176-abf7d1dabec2';
-It has: profile (canonical name, email, location, work rights, degree, study period, WAM), experiences, projects, evidence (each with evidence_id, parent_id, raw_fact, metric, result, technologies, claim_restriction, notes), skills, metrics (with claim_restriction), star_stories, coursework, conflicts (status Restricted = banned claims), role_mapping (per role family: priority_evidence, skills_to_surface, claims_to_avoid). This is the ONLY source of facts about Abhiram. Ignore anything you remember about him from elsewhere, including old resumes.
+It has: profile (canonical name, email, phone, links, location, work rights, degree, study period, WAM, Honours WAM), experiences, projects, evidence (each with evidence_id, parent_id, raw_fact, metric, result, technologies, claim_restriction, notes), skills, metrics (with claim_restriction), star_stories, coursework, conflicts (status Restricted = banned claims), role_mapping (per role family: priority_evidence, skills_to_surface, claims_to_avoid). This is the ONLY source of facts about Abhiram. Ignore anything you remember about him from elsewhere, including old resumes.
 
 ## Step 2: Pick jobs
 First, requests Abhiram queued from the website (these come first and may already have a package; write a new version):
@@ -26,15 +26,17 @@ Skip jobs that are senior/lead/staff/principal, need 3+ years, are purely mechan
 ## Step 3: Write one package per job
 Pick the role_mapping entry that best fits the job. Lead with its priority_evidence, then secondary_evidence.
 
-Resume (one page; 2-3 experiences, 2-3 projects, 2-4 bullets each):
+Resume. It is rendered in Abhiram's V4 template (Times New Roman, one A4 page): name and contact line (added by the website from the profile), a quoted tagline, Education, Summary, Skills, Professional Experience, Research & Selected Technical Projects. It must fit on one page: 2 experiences with 3-6 bullets each and 2-3 projects with 2-3 bullets each, every bullet at most two lines (about 35 words). In any text you may wrap 1-2 key phrases per bullet in **double asterisks** for bold (tools, outcomes, metrics), and write ordinals as 2^nd^ for superscript.
 - Every bullet cites 1-3 evidence_ids it is based on. A bullet may only say what those evidence rows say. You may reword, tighten, and use the job's vocabulary where it truthfully applies; you may not add tools, scope, ownership, outcomes or numbers.
 - Every number in a bullet (percentages, counts, times, ratios) must appear in a cited evidence row (raw_fact, metric, result, action, context) or in metrics for the same parent. Copy it exactly with its qualifier (e.g. "no extra FP16 subproducts", "across AlexNet and ResNet18").
 - Obey every claim_restriction and every conflict with status Restricted. Never use: Redback lap-time claims, Kubernetes/Terraform/Jenkins/Kafka, low-power smartwatch claims, real SpO2, Lightspeed +20% accuracy / 5 engineers / production adoption, the old 3 sec/image HOG baseline, or backend ownership of the Presto backend. Skip evidence whose claim_restriction says "Do not use" or "Use only if" unless nothing else covers the requirement.
 - Team results (claim_restriction contains TEAM RESULT, or the evidence says team/group/co-developed) must be worded as team work ("Our team's YOLOv8m model reached..."), never as his solo work.
 - Skills: 2-4 groups. Each item, separated by "; ", must be copied exactly from a skills[].skill name or an evidence/experience/project technologies entry. Do not list a skill the job wants if his evidence lacks it; put it in scores.gaps instead.
-- Summary: 1-2 sentences, cites the evidence_ids it draws on, no numbers unless cited.
-- Education: institution "UNSW Sydney", degree from profile without ", UNSW Sydney", dates = profile Study period, details = "WAM " + profile WAM, plus the Honours thesis mark only if the role is research/ML.
-- experience item: parent_id = experience_id, title = role, org = organisation, location, dates "Mon YYYY – Mon YYYY" from start/end. project item: parent_id = project_id, title = project, org = course_or_context, dates "".
+- Tagline: one line of at most 20 words describing him for this role (e.g. "Computer Engineering graduate with experience in embedded firmware, FPGA acceleration and computer vision"). Cite evidence_ids; no numbers unless they are in cited evidence. No quote marks (the template adds them).
+- Summary: 2-3 sentences, cites the evidence_ids it draws on, no numbers unless cited.
+- Education: institution "University of New South Wales, Sydney, NSW", degree "Bachelor of Engineering in **Computer Engineering (Honours)**", dates = profile Study period, details = "Honours WAM: " + profile Honours WAM (fall back to "WAM: " + profile WAM if Honours WAM is missing).
+- Education highlights (3-6, most relevant first): course marks copied exactly from coursework (format "<Course name> – **<result>**", e.g. "Thesis – **89 HD**", "Design Project B – **77 DN**"; skip ranges like "87-89" and results below 75 unless directly relevant), and roles from experiences that are not in Professional Experience (e.g. "Student Ambassador, Engineering Dean's Unit" with dates "Apr 2025 – Present"). Every number must appear in the profile or coursework. evidence_ids may be empty for marks.
+- experience item: parent_id = experience_id, title = role, org = organisation, location, dates "Mon YYYY – Mon YYYY" from start/end. project item: parent_id = project_id, title = project, org = course_or_context written as "<Course code or Thesis> UNSW" where it is a UNSW course (e.g. "UNSW COMP4601", "Thesis UNSW"), mark = that course's result from coursework if listed (e.g. "89 HD"), otherwise "", dates "".
 - Do not put name, email or phone in the package. The website adds the header from the profile.
 
 Cover letter (direct and outcome-focused, 250-350 words, 4 paragraphs): role and a specific, honest reason this company/role fits; most relevant experience with one cited outcome; a second, different piece of evidence; an honest note on the biggest gap if a must-have is missing, and a short close. Same factual rules as bullets. Salutation "Dear Hiring Manager,". Sign off "Abhiram Yanamandra". No "I am passionate", "fast-paced", "leverage", "synergy".
@@ -55,9 +57,10 @@ Re-read the package against the evidence database line by line. For every bullet
 The package JSON must match exactly (no extra keys):
 {"scores":{"fit":int,"ats":int,"summary":str,"strengths":[str],"gaps":[str]},
  "resume":{"variant":str,"summary":{"text":str,"evidence_ids":[str]},"skills":[{"label":str,"value":str}],
-   "education":{"institution":str,"degree":str,"dates":str,"details":str},
-   "experience":[{"parent_id":str,"title":str,"org":str,"location":str,"dates":str,"bullets":[{"text":str,"evidence_ids":[str]}]}],
-   "projects":[same shape as experience]},
+   "tagline":{"text":str,"evidence_ids":[str]},
+   "education":{"institution":str,"degree":str,"dates":str,"details":str,"highlights":[{"text":str,"dates":str,"evidence_ids":[str]}]},
+   "experience":[{"parent_id":str,"title":str,"org":str,"location":str,"dates":str,"mark":"","bullets":[{"text":str,"evidence_ids":[str]}]}],
+   "projects":[same shape as experience, with "mark" set where known]},
  "cover_letter":str,
  "answers":[{"question":str,"answer":str,"evidence_ids":[str]}],
  "outreach":{"hiring_manager":str,"linkedin_query":str,"linkedin_message":str,"email":str},

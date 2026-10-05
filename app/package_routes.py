@@ -1,9 +1,11 @@
 """API for application packages (one tailored bundle per job version)."""
 
+import re
 from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi.responses import Response
 from auth import workspace
 from db import repo, now
-from services import packages
+from services import packages, resume_docx
 from services.intelligence import dossier
 from services.jobs import assess_job
 
@@ -72,6 +74,9 @@ def get_package(job_id: str, version: int | None = None):
         c = current["content"]
         res = c.get("resume", {})
         evidence_ids |= set(res.get("summary", {}).get("evidence_ids", []))
+        evidence_ids |= set(res.get("tagline", {}).get("evidence_ids", []))
+        for h in res.get("education", {}).get("highlights", []):
+            evidence_ids |= set(h.get("evidence_ids", []))
         for kind in ("experience", "projects"):
             for item in res.get(kind, []):
                 for b in item.get("bullets", []):
@@ -152,3 +157,23 @@ def cancel_request(job_id: str):
     _job(job_id)
     repo().update("package_requests", {"status": "cancelled", "done_at": now()}, job_id=job_id, status="pending")
     return {"ok": True}
+
+
+@router.post("/jobs/{job_id}/package/resume.docx")
+def resume_word(job_id: str, payload: dict = Body(...)):
+    """Word file of the resume as currently shown in the editor (saved or not).
+
+    The header always comes from the profile; the body is validated with the
+    same schema as a saved package."""
+    job = _job(job_id)
+    try:
+        resume = packages.Resume.model_validate(payload.get("resume") or {}).model_dump()
+    except Exception as exc:
+        raise HTTPException(422, f"Resume is not in the expected format: {str(exc).splitlines()[0]}")
+    header = packages.header()
+    name = re.sub(r"[^A-Za-z0-9]+", "_", f"{header.get('name') or 'Resume'} {job.get('company') or ''}").strip("_")
+    return Response(
+        resume_docx.render(header, resume),
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{name}.docx"'},
+    )

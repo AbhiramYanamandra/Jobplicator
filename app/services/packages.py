@@ -34,18 +34,27 @@ class Item(_M):
     org: str = Field(default="", max_length=300)
     location: str = Field(default="", max_length=200)
     dates: str = Field(default="", max_length=100)
+    mark: str = Field(default="", max_length=50)  # projects: course/thesis mark, e.g. "89 HD"
     bullets: list[Cited] = Field(default_factory=list, max_length=12)
+
+
+class Highlight(_M):
+    text: str = Field(default="", max_length=300)
+    dates: str = Field(default="", max_length=100)
+    evidence_ids: list[str] = Field(default_factory=list, max_length=10)
 
 
 class Education(_M):
     institution: str = Field(default="", max_length=300)
     degree: str = Field(default="", max_length=300)
     dates: str = Field(default="", max_length=100)
-    details: str = Field(default="", max_length=1000)
+    details: str = Field(default="", max_length=1000)  # right of the degree line, e.g. "Honours WAM: 74.5"
+    highlights: list[Highlight] = Field(default_factory=list, max_length=8)
 
 
 class Resume(_M):
     variant: str = Field(default="", max_length=100)
+    tagline: Cited = Field(default_factory=Cited)
     summary: Cited = Field(default_factory=Cited)
     skills: list[Skill] = Field(default_factory=list, max_length=12)
     education: Education = Field(default_factory=Education)
@@ -100,6 +109,20 @@ STOP = {"claim", "claims", "keywords", "etc", "the", "and", "with", "for", "vs",
 
 def _norm(s):
     return re.sub(r"\s+", " ", str(s or "").lower())
+
+
+def plain(text):
+    """Text without the resume's **bold** and ^superscript^ markup."""
+    return str(text or "").replace("**", "").replace("^", "")
+
+
+def _academic_text(profile):
+    """Facts education lines may draw on: profile fields, coursework, roles."""
+    parts = [f"{x.get('Field')} {x.get('Value')}" for x in profile.get("profile", [])]
+    parts += [f"{c.get('course')} {c.get('result')}" for c in profile.get("coursework", [])]
+    parts += [f"{x.get('role')} {x.get('organisation')} {x.get('summary')}" for x in profile.get("experiences", [])]
+    parts += [f"{x.get('project')} {x.get('course_or_context')}" for x in profile.get("projects", [])]
+    return _norm(" ".join(parts)).replace(",", "")
 
 
 def _evidence_text(e):
@@ -169,7 +192,16 @@ def verify(content: dict, profile: dict | None = None) -> dict:
     def flag(severity, where, message):
         flags.append({"severity": severity, "where": where, "message": message})
 
+    academic = _academic_text(profile)
+
+    def check_academic(where, text):
+        """Education lines and project marks: numbers must be in the profile/coursework."""
+        for n in _numbers(plain(text)):
+            if not re.search(r"(?<![\d.])" + re.escape(n) + r"(?![\d])", academic):
+                flag("error", where, f"Number '{n}' is not in your profile or coursework results.")
+
     def check_cited(where, text, ids, required=True):
+        text = plain(text)
         if not (text or "").strip():
             return
         if not ids:
@@ -207,16 +239,27 @@ def verify(content: dict, profile: dict | None = None) -> dict:
     resume = content.get("resume", {})
     summary = resume.get("summary", {})
     check_cited("Resume summary", summary.get("text"), summary.get("evidence_ids", []), required=False)
+    tagline = resume.get("tagline", {})
+    check_cited("Resume tagline", tagline.get("text"), tagline.get("evidence_ids", []), required=False)
+    education = resume.get("education", {})
+    check_academic("Education", f"{education.get('degree', '')} {education.get('details', '')}")
+    for i, h in enumerate(education.get("highlights", [])):
+        if h.get("evidence_ids"):
+            check_cited(f"Education · highlight {i + 1}", h.get("text"), h["evidence_ids"], required=False)
+        else:
+            check_academic(f"Education · highlight {i + 1}", h.get("text"))
     for kind in ("experience", "projects"):
         for i, item in enumerate(resume.get(kind, [])):
             label = item.get("title") or item.get("org") or f"{kind} {i + 1}"
             if item.get("parent_id") and item["parent_id"] not in parents:
                 flag("error", label, f"Unknown experience/project '{item['parent_id']}'.")
+            if item.get("mark"):
+                check_academic(label, item["mark"])
             for j, b in enumerate(item.get("bullets", [])):
                 check_cited(f"{label} · bullet {j + 1}", b.get("text"), b.get("evidence_ids", []))
     known = _known_skill_text(profile)
     for s in resume.get("skills", []):
-        for token in re.split(r"[;,]", s.get("value", "")):
+        for token in re.split(r"[;,]", plain(s.get("value", ""))):
             t = token.strip()
             core = _norm(re.sub(r"\(.*?\)", "", t)).strip()
             if core and core not in known:
@@ -291,9 +334,30 @@ def save(job_id, content: dict, source: str):
 def header():
     """Contact header comes only from the canonical profile, never generated text."""
     return {k: profile_value(f) for k, f in (
-        ("name", "Name"), ("email", "Email"), ("location", "Location"),
-        ("work_rights", "Work rights"), ("degree", "Degree"), ("study_period", "Study period"),
-        ("wam", "WAM"))}
+        ("name", "Name"), ("email", "Email"), ("phone", "Phone"), ("location", "Location"),
+        ("work_rights", "Work rights"), ("licence", "Driver licence"),
+        ("github", "GitHub"), ("linkedin", "LinkedIn"), ("website", "Website"),
+        ("degree", "Degree"), ("study_period", "Study period"),
+        ("wam", "WAM"), ("honours_wam", "Honours WAM"))}
+
+
+def wam_line(h):
+    if h.get("honours_wam"):
+        return f"Honours WAM: {h['honours_wam']}"
+    return f"WAM: {h['wam']}" if h.get("wam") else ""
+
+
+def _starter_highlights(profile):
+    """Thesis mark plus the strongest design-project marks, verbatim from coursework."""
+    out = []
+    for c in profile.get("coursework", []):
+        course, result = str(c.get("course", "")), str(c.get("result", ""))
+        if not re.fullmatch(r"\d{2,3} (HD|DN)", result):
+            continue
+        name = course.split(" / ")[0]
+        if "thesis" in name.lower() or "design" in name.lower():
+            out.append({"text": f"{name} \u2013 **{result}**", "dates": "", "evidence_ids": []})
+    return out[:4]
 
 
 # --- deterministic evidence-only starter draft --------------------------------
@@ -366,9 +430,10 @@ def starter(job: dict, dossier: dict, match: dict) -> dict:
             "variant": mapping.get("role_family", ""),
             "summary": {"text": profile_value("Primary positioning"), "evidence_ids": []},
             "skills": [{"label": "Relevant", "value": "; ".join(surface)}] if surface else [],
-            "education": {"institution": "UNSW Sydney" if "UNSW" in h["degree"] else "",
+            "education": {"institution": "University of New South Wales, Sydney, NSW" if "UNSW" in h["degree"] else "",
                           "degree": h["degree"].replace(", UNSW Sydney", ""),
-                          "dates": h["study_period"], "details": f"WAM {h['wam']}" if h["wam"] else ""},
+                          "dates": h["study_period"], "details": wam_line(h),
+                          "highlights": _starter_highlights(profile)},
             "experience": experience, "projects": projects,
         },
         "cover_letter": dossier.get("cover_letter", ""),

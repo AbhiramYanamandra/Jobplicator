@@ -38,7 +38,7 @@ let accessToken = null;
 export function setAccessToken(value) {
   accessToken = value;
 }
-export async function api(path, body) {
+async function request(path, body) {
   const r = await fetch(
     path,
     body === undefined
@@ -65,7 +65,26 @@ export async function api(path, body) {
     } catch {}
     throw new Error(message || `Request failed (${r.status})`);
   }
-  return r.json();
+  return r;
+}
+export async function api(path, body) {
+  return (await request(path, body)).json();
+}
+// POST a body and save the binary response (e.g. a .docx) as a file.
+export async function downloadFrom(path, body, fallbackName) {
+  const r = await request(path, body);
+  const name =
+    /filename="([^"]+)"/.exec(
+      r.headers.get("Content-Disposition") || "",
+    )?.[1] || fallbackName;
+  const url = URL.createObjectURL(await r.blob());
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 export function useData(path, revision = 0) {
   const [data, setData] = useState(null),

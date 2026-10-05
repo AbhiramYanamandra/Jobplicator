@@ -13,6 +13,9 @@ import {
 import {
   ArrowRight,
   CheckCircle2,
+  Download,
+  Plus,
+  Trash2,
   FilePlus2,
   Printer,
   Save,
@@ -23,6 +26,7 @@ import {
 } from "lucide-react";
 import {
   api,
+  downloadFrom,
   useData,
   Load,
   Panel,
@@ -36,7 +40,6 @@ import {
   DataTable,
   statuses,
 } from "./ui";
-import { printCSS } from "./resume";
 
 const TABS = [
   ["resume", "Resume"],
@@ -64,43 +67,104 @@ function openPrint(title, body, css) {
   return true;
 }
 
-export function resumeHtml(header, resume) {
-  const contact = [header.location, header.email, header.work_rights]
-    .filter(Boolean)
-    .map(esc)
-    .join(" | ");
-  const items = (kind) =>
-    (resume[kind] || [])
-      .map(
-        (x) =>
-          `<div class="resume-item"><div class="resume-row"><p><b>${esc(
-            x.title,
-          )}</b>${x.org ? (kind === "experience" ? ", " : ": ") + esc(x.org) : ""}${
-            x.location ? ", " + esc(x.location) : ""
-          }</p><em>${esc(x.dates)}</em></div><ul>${(x.bullets || [])
-            .filter((b) => b.text.trim())
-            .map((b) => `<li>${esc(b.text)}</li>`)
-            .join("")}</ul></div>`,
-      )
-      .join("");
-  const ed = resume.education || {};
-  return `<div class="resume-sheet"><header><h1>${esc(header.name)}</h1><p>${contact}</p></header>
-<section><h2>EDUCATION</h2><div class="resume-row"><h3>${esc(ed.institution)}</h3><em>${esc(
-    ed.dates,
-  )}</em></div><p>${esc(ed.degree)}</p>${ed.details ? `<p>${esc(ed.details)}</p>` : ""}</section>
-${resume.summary?.text ? `<section><h2>PROFESSIONAL SUMMARY</h2><p>${esc(resume.summary.text)}</p></section>` : ""}
-${
-  (resume.skills || []).length
-    ? `<section><h2>TECHNICAL SKILLS</h2>${resume.skills
-        .map(
-          (s) =>
-            `<p class="resume-skill"><b>${esc(s.label)}: </b>${esc(s.value)}</p>`,
-        )
-        .join("")}</section>`
-    : ""
+// **bold** and ^superscript^ markup, after escaping.
+export const markup = (s) =>
+  esc(s)
+    .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/\^(.+?)\^/g, "<sup>$1</sup>");
+
+export function contactItems(h) {
+  return [
+    h.phone && { label: h.phone },
+    h.email && { label: "Email", url: `mailto:${h.email}` },
+    h.github && { label: "GitHub", url: h.github },
+    h.linkedin && { label: "LinkedIn", url: h.linkedin },
+    h.website && { label: "Website", url: h.website },
+    h.work_rights && { label: h.work_rights },
+    h.licence && { label: h.licence },
+  ].filter(Boolean);
 }
-${(resume.experience || []).length ? `<section><h2>PROFESSIONAL EXPERIENCE</h2>${items("experience")}</section>` : ""}
-${(resume.projects || []).length ? `<section><h2>PROJECTS</h2>${items("projects")}</section>` : ""}</div>`;
+
+// Mirrors app/services/resume_docx.py so the preview matches the Word file.
+const sheetCSS = `.tpl,.tpl *{box-sizing:border-box}
+.tpl{font-family:'Times New Roman',Times,serif;color:#000;background:#fff;width:210mm;min-height:297mm;padding:5mm 12.7mm 12.7mm;font-size:9pt;line-height:1.15;text-align:justify}
+.tpl p{margin:0}.tpl b{font-weight:bold}.tpl sup{font-size:65%;line-height:0}
+.tpl .name{text-align:center;font-size:15pt;font-weight:bold}
+.tpl .contact{text-align:center;font-size:10pt}.tpl .contact a{color:#00f;text-decoration:none}
+.tpl .tagline{text-align:center}
+.tpl h2{font-size:9pt;font-weight:bold;text-transform:uppercase;margin:2pt 0 1pt;padding-bottom:1pt;border-bottom:1pt solid #000;text-align:left}
+.tpl .row{display:flex;justify-content:space-between;gap:8pt;text-align:left}
+.tpl .row em{font-weight:bold;font-style:italic;white-space:nowrap}
+.tpl .role{font-size:10pt}.tpl .gap{margin-top:2pt}
+.tpl ul{margin:0;padding-left:36pt;list-style:none}.tpl li{position:relative}.tpl li::before{content:"\\2022";position:absolute;left:-18pt}`;
+export const templateCSS = `@page{size:A4;margin:0}body{margin:0;color:#000;background:#fff}${sheetCSS}`;
+
+export function resumeHtml(header, resume) {
+  const row = (left, dates, cls = "") =>
+    `<div class="row ${cls}"><span>${left}</span>${dates ? `<em>${markup(dates)}</em>` : ""}</div>`;
+  const contact = contactItems(header)
+    .map((c) =>
+      c.url ? `<a href="${esc(c.url)}">${esc(c.label)}</a>` : esc(c.label),
+    )
+    .join(" | ");
+  const bullets = (list) => {
+    const items = (list || []).filter((b) => (b.text || "").trim());
+    return items.length
+      ? `<ul>${items.map((b) => `<li>${markup(b.text)}</li>`).join("")}</ul>`
+      : "";
+  };
+  const ed = resume.education || {};
+  const highlights = (ed.highlights || []).filter((h) => (h.text || "").trim());
+  const parts = [
+    `<p class="name">${esc(header.name)}</p>`,
+    `<p class="contact">${contact}</p>`,
+  ];
+  if (resume.tagline?.text?.trim())
+    parts.push(
+      `<p class="tagline">“${markup(resume.tagline.text.trim())}”</p>`,
+    );
+  if (ed.institution || ed.degree) {
+    parts.push("<h2>Education</h2>");
+    parts.push(row(`<b>${markup(ed.institution)}</b>`, ed.dates));
+    if (ed.degree || ed.details) parts.push(row(markup(ed.degree), ed.details));
+    if (highlights.length)
+      parts.push(
+        `<ul>${highlights
+          .map((h) => `<li>${row(markup(h.text), h.dates)}</li>`)
+          .join("")}</ul>`,
+      );
+  }
+  if (resume.summary?.text?.trim())
+    parts.push(`<h2>Summary</h2><p>${markup(resume.summary.text.trim())}</p>`);
+  if ((resume.skills || []).length)
+    parts.push(
+      `<h2>Skills</h2><ul>${resume.skills
+        .map((s) => `<li><b>${esc(s.label)}:</b> ${markup(s.value)}</li>`)
+        .join("")}</ul>`,
+    );
+  const section = (kind, title) => {
+    const items = (resume[kind] || []).filter(
+      (x) => x.title || (x.bullets || []).length,
+    );
+    if (!items.length) return;
+    parts.push(`<h2>${title}</h2>`);
+    items.forEach((x, i) => {
+      const left =
+        kind === "experience"
+          ? `<b>${esc(x.title)}</b>${[x.org, x.location].filter(Boolean).length ? ", " + esc([x.org, x.location].filter(Boolean).join(", ")) : ""}`
+          : `<b>${esc(x.title)}${x.org ? ": " + esc(x.org) : ""}${x.mark ? " – " + esc(x.mark) : ""}</b>`;
+      parts.push(
+        row(
+          left,
+          x.dates,
+          `${kind === "experience" ? "role" : ""} ${i ? "gap" : ""}`,
+        ) + bullets(x.bullets),
+      );
+    });
+  };
+  section("experience", "Professional Experience");
+  section("projects", "Research &amp; Selected Technical Projects");
+  return `<div class="tpl">${parts.join("")}</div>`;
 }
 
 const letterCSS =
@@ -390,6 +454,108 @@ function RequestPanel({ id, request, hasPackage, busy, run }) {
   );
 }
 
+function EducationEditor({ education, checks, edit }) {
+  const ed = education || {};
+  const highlights = ed.highlights || [];
+  const set = (key) => (e) =>
+    edit((c) => {
+      c.resume.education[key] = e.target.value;
+    });
+  const setHighlight = (i, key) => (e) =>
+    edit((c) => {
+      c.resume.education.highlights[i][key] = e.target.value;
+    });
+  return (
+    <Panel>
+      <Section
+        title="Education"
+        subtitle="Marks and numbers must match your profile and coursework results."
+      />
+      <SimpleGrid columns={{ base: 1, md: 2 }} gap="2" mb="2">
+        <Input
+          size="sm"
+          aria-label="Institution"
+          value={ed.institution || ""}
+          onChange={set("institution")}
+        />
+        <Input
+          size="sm"
+          aria-label="Study dates"
+          value={ed.dates || ""}
+          onChange={set("dates")}
+        />
+        <Input
+          size="sm"
+          aria-label="Degree"
+          value={ed.degree || ""}
+          onChange={set("degree")}
+        />
+        <Input
+          size="sm"
+          aria-label="WAM"
+          value={ed.details || ""}
+          onChange={set("details")}
+        />
+      </SimpleGrid>
+      <FlagList flags={evidenceFlags(checks, "Education")} />
+      <Text fontSize="xs" fontWeight="600" mt="3" mb="1">
+        Highlights
+      </Text>
+      {highlights.map((h, i) => (
+        <Box key={i} mb="2">
+          <Flex gap="2">
+            <Input
+              size="sm"
+              aria-label={`Highlight ${i + 1}`}
+              value={h.text}
+              onChange={setHighlight(i, "text")}
+            />
+            <Input
+              size="sm"
+              w="170px"
+              placeholder="Dates (optional)"
+              aria-label={`Highlight ${i + 1} dates`}
+              value={h.dates || ""}
+              onChange={setHighlight(i, "dates")}
+            />
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-label={`Remove highlight ${i + 1}`}
+              onClick={() =>
+                edit((c) => {
+                  c.resume.education.highlights.splice(i, 1);
+                })
+              }
+            >
+              <Trash2 size={14} />
+            </Button>
+          </Flex>
+          <FlagList
+            flags={evidenceFlags(checks, `Education · highlight ${i + 1}`)}
+          />
+        </Box>
+      ))}
+      <Button
+        size="xs"
+        variant="outline"
+        disabled={highlights.length >= 8}
+        onClick={() =>
+          edit((c) => {
+            c.resume.education.highlights = [
+              ...(c.resume.education.highlights || []),
+              { text: "", dates: "", evidence_ids: [] },
+            ];
+          })
+        }
+      >
+        <Plus size={14} />
+        Add highlight
+      </Button>
+    </Panel>
+  );
+}
+
 function PackageEditor({ id, data, go, saved, setVersion }) {
   const {
     job,
@@ -465,8 +631,20 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
     openPrint(
       `${header.name} resume ${job.company}`,
       resumeHtml(header, resume),
-      printCSS,
+      templateCSS,
     ) || setError("Please allow the print window, then try again.");
+  const downloadWord = async () => {
+    setError("");
+    try {
+      await downloadFrom(
+        `/api/jobs/${id}/package/resume.docx`,
+        { resume },
+        "Resume.docx",
+      );
+    } catch (e) {
+      setError(e.message);
+    }
+  };
   const printLetter = () =>
     openPrint(
       `${header.name} cover letter ${job.company}`,
@@ -692,7 +870,47 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
                     }
                   />
                   <FlagList flags={evidenceFlags(checks, "Resume summary")} />
+                  <Text fontSize="xs" color="muted" mt="2">
+                    Wrap words in **double asterisks** to make them bold.
+                  </Text>
                 </Panel>
+                <Panel>
+                  <Section
+                    title="Tagline"
+                    subtitle="One quoted line under your contact details. Leave empty to hide it."
+                  />
+                  <Input
+                    size="sm"
+                    aria-label="Resume tagline"
+                    value={resume.tagline?.text || ""}
+                    onChange={(e) =>
+                      edit((c) => {
+                        c.resume.tagline = {
+                          ...(c.resume.tagline || { evidence_ids: [] }),
+                          text: e.target.value,
+                        };
+                      })
+                    }
+                  />
+                  <Chips
+                    ids={resume.tagline?.evidence_ids || []}
+                    evidence={evidence}
+                    onChange={(ids) =>
+                      edit((c) => {
+                        c.resume.tagline = {
+                          ...(c.resume.tagline || { text: "" }),
+                          evidence_ids: ids,
+                        };
+                      })
+                    }
+                  />
+                  <FlagList flags={evidenceFlags(checks, "Resume tagline")} />
+                </Panel>
+                <EducationEditor
+                  education={resume.education}
+                  checks={checks}
+                  edit={edit}
+                />
                 <Panel>
                   <Section
                     title="Skills"
@@ -749,6 +967,23 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
                               .filter(Boolean)
                               .join(" · ")}
                           </Text>
+                          {kind === "projects" && (
+                            <Input
+                              size="sm"
+                              w="160px"
+                              mb="2"
+                              placeholder="Mark, e.g. 89 HD"
+                              aria-label={`${label} mark`}
+                              value={item.mark || ""}
+                              onChange={(e) =>
+                                edit(
+                                  (c) =>
+                                    (c.resume.projects[i].mark =
+                                      e.target.value),
+                                )
+                              }
+                            />
+                          )}
                           <FlagList flags={evidenceFlags(checks, label)} />
                           {item.bullets.map((b, j) => (
                             <Box
@@ -803,15 +1038,19 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
                     Preview · header comes from your profile (
                     {header.email || "no email set"})
                   </Text>
-                  <Button size="xs" variant="outline" onClick={printResume}>
-                    <Printer size={14} />
-                    Print / PDF
-                  </Button>
+                  <Flex gap="2">
+                    <Button size="xs" variant="outline" onClick={downloadWord}>
+                      <Download size={14} />
+                      Word
+                    </Button>
+                    <Button size="xs" variant="outline" onClick={printResume}>
+                      <Printer size={14} />
+                      Print / PDF
+                    </Button>
+                  </Flex>
                 </Flex>
                 <Box overflow="hidden" p="2" bg="soft" borderRadius="lg">
-                  <style>
-                    {printCSS.replace("@page{size:A4;margin:0}", "")}
-                  </style>
+                  <style>{sheetCSS}</style>
                   {/* The A4 sheet is 210mm (~794px) wide; zoom it to fit the column. */}
                   <Box
                     ref={previewRef}

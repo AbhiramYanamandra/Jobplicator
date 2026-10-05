@@ -12,6 +12,7 @@ import userEvent from "@testing-library/user-event";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "next-themes";
 import App from "./App";
+import { resumeHtml } from "./packages";
 import { system } from "./theme";
 import fixtures from "./test-fixtures.json";
 let calls = [];
@@ -27,6 +28,8 @@ beforeEach(() => {
         return {
           ok: true,
           json: async () => ({ id: 999, ok: true, count: 2 }),
+          headers: { get: () => 'attachment; filename="Resume_Test.docx"' },
+          blob: async () => new Blob(["docx"]),
         };
       }
       const data = fixtures[path];
@@ -684,4 +687,83 @@ it("runs the daily company-board check when the dashboard opens", async () => {
     const post = calls.find((c) => c.path === "/api/boards/sync");
     expect(JSON.parse(post.options.body)).toEqual({ stale_only: true });
   });
+});
+
+it("renders the resume template with markup, marks and the Honours WAM", () => {
+  const html = resumeHtml(
+    {
+      name: "Alex Example",
+      phone: "+61 400 000 000",
+      email: "alex@example.test",
+      github: "https://github.com/example",
+      work_rights: "Australian Permanent Resident",
+    },
+    {
+      tagline: { text: "Embedded engineer", evidence_ids: [] },
+      summary: { text: "Built <b>things</b>", evidence_ids: [] },
+      skills: [{ label: "Programming", value: "C; **Python**" }],
+      education: {
+        institution: "UNSW",
+        degree: "BE in **Computer Engineering**",
+        dates: "Mar 2022 – Aug 2026",
+        details: "Honours WAM: 74.5",
+        highlights: [{ text: "Placed 2^nd^", dates: "2023", evidence_ids: [] }],
+      },
+      experience: [
+        {
+          title: "Intern",
+          org: "Lab",
+          location: "Sydney",
+          dates: "2025",
+          bullets: [{ text: "Wrote **firmware**", evidence_ids: [] }],
+        },
+      ],
+      projects: [
+        { title: "Thesis", org: "UNSW", mark: "89 HD", dates: "", bullets: [] },
+      ],
+    },
+  );
+  expect(html).toContain('<a href="mailto:alex@example.test">Email</a>');
+  expect(html).toContain("+61 400 000 000 | <a");
+  expect(html).toContain("\u201cEmbedded engineer\u201d");
+  expect(html).toContain("<em>Honours WAM: 74.5</em>");
+  expect(html).toContain("Placed 2<sup>nd</sup>");
+  expect(html).toContain("<b>Computer Engineering</b>");
+  expect(html).toContain("Wrote <b>firmware</b>");
+  expect(html).toContain("<b>Thesis: UNSW – 89 HD</b>");
+  expect(html).toContain("Built &lt;b&gt;things&lt;/b&gt;");
+  expect(html).not.toContain("**");
+});
+
+it("edits template fields and downloads the resume as Word", async () => {
+  const user = userEvent.setup();
+  vi.stubGlobal(
+    "URL",
+    Object.assign(URL, {
+      createObjectURL: vi.fn(() => "blob:x"),
+      revokeObjectURL: vi.fn(),
+    }),
+  );
+  const row = fixtures["/api/packages"].packages[0];
+  show(`package/${row.job_id}`);
+  const tagline = await screen.findByRole("textbox", {
+    name: "Resume tagline",
+  });
+  await user.type(tagline, "Embedded engineer");
+  await user.click(screen.getByRole("button", { name: /Add highlight/ }));
+  await user.type(
+    screen.getByRole("textbox", { name: "Highlight 1" }),
+    "Thesis – 89 HD",
+  );
+  await user.click(screen.getByRole("button", { name: "Word" }));
+  await waitFor(() => {
+    const post = calls.find(
+      (c) => c.path === `/api/jobs/${row.job_id}/package/resume.docx`,
+    );
+    expect(post).toBeTruthy();
+    const body = JSON.parse(post.options.body);
+    expect(body.resume.tagline.text).toBe("Embedded engineer");
+    expect(body.resume.education.highlights[0].text).toBe("Thesis – 89 HD");
+  });
+  expect(URL.createObjectURL).toHaveBeenCalled();
 });
