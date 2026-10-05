@@ -19,6 +19,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Copy,
+  Sparkles,
 } from "lucide-react";
 import {
   api,
@@ -126,6 +127,32 @@ export function Packages({ revision, go }) {
               title="Packages"
               subtitle={`${d.packages.length} packaged · ${d.jobs_without_package} tracked jobs without a package yet`}
             />
+            {d.queued?.length > 0 && (
+              <Box mb="5">
+                <Text fontSize="sm" fontWeight="600" mb="2">
+                  Queued for the next AI run
+                </Text>
+                <Stack gap="1">
+                  {d.queued.map((q) => (
+                    <Flex key={q.job_id} gap="2" align="center" wrap="wrap">
+                      <Button
+                        variant="plain"
+                        p="0"
+                        h="auto"
+                        fontSize="sm"
+                        onClick={() => go(`package/${q.job_id}`)}
+                      >
+                        {q.title}
+                      </Button>
+                      <Text fontSize="sm" color="muted">
+                        {q.company}
+                        {q.note ? ` · “${q.note}”` : ""}
+                      </Text>
+                    </Flex>
+                  ))}
+                </Stack>
+              </Box>
+            )}
             {d.packages.length ? (
               <DataTable
                 headers={[
@@ -164,6 +191,16 @@ export function Packages({ revision, go }) {
                       <Tag tone={p.status === "approved" ? "green" : "gray"}>
                         v{p.version} · {p.status}
                       </Tag>
+                      {p.package_source === "claude" && (
+                        <Text fontSize="xs" color="muted">
+                          AI-written
+                        </Text>
+                      )}
+                      {p.requested && (
+                        <Text fontSize="xs" color="muted">
+                          Rewrite queued
+                        </Text>
+                      )}
                     </td>
                     <td>{p.fit ?? "–"}</td>
                     <td>{p.ats ?? "–"}</td>
@@ -277,8 +314,92 @@ function Chips({ ids, evidence, onChange }) {
   );
 }
 
+function RequestPanel({ id, request, hasPackage, busy, run }) {
+  const [open, setOpen] = useState(false),
+    [note, setNote] = useState(request?.note || "");
+  if (request)
+    return (
+      <Notice>
+        <Flex justify="space-between" align="center" gap="3" wrap="wrap">
+          <Text>
+            Queued for the AI generator, which runs daily at 8:46am (or run
+            “Jobplicator package generator” now from your Claude scheduled
+            tasks).
+            {request.note ? ` Your note: “${request.note}”` : ""}
+          </Text>
+          <Button
+            size="xs"
+            variant="outline"
+            disabled={busy}
+            onClick={() =>
+              run(
+                () => api(`/api/jobs/${id}/package/request/cancel`, {}),
+                "Request cancelled",
+              )
+            }
+          >
+            Cancel request
+          </Button>
+        </Flex>
+      </Notice>
+    );
+  return open ? (
+    <Panel p="4">
+      <Text fontSize="sm" fontWeight="600" mb="2">
+        {hasPackage
+          ? "Ask AI to rewrite this package"
+          : "Ask AI to write this package"}
+      </Text>
+      <Textarea
+        size="sm"
+        rows={2}
+        aria-label="Note for the AI generator"
+        placeholder="Optional: e.g. lead with FPGA work, keep the cover letter shorter"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
+      <Flex gap="2" mt="2">
+        <Button
+          size="sm"
+          colorPalette="green"
+          disabled={busy}
+          onClick={() =>
+            run(
+              () => api(`/api/jobs/${id}/package/request`, { note }),
+              "Queued for the next AI run",
+            )
+          }
+        >
+          Queue for AI
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+          Cancel
+        </Button>
+      </Flex>
+    </Panel>
+  ) : (
+    <Button
+      size="sm"
+      variant="outline"
+      alignSelf="start"
+      onClick={() => setOpen(true)}
+    >
+      <Sparkles size={15} />
+      {hasPackage ? "Ask AI to rewrite" : "Ask AI to write this package"}
+    </Button>
+  );
+}
+
 function PackageEditor({ id, data, go, saved, setVersion }) {
-  const { job, package: pkg, versions, evidence, header, application } = data;
+  const {
+    job,
+    package: pkg,
+    versions,
+    evidence,
+    header,
+    application,
+    request,
+  } = data;
   const [tab, setTab] = useState("resume"),
     [content, setContent] = useState(() =>
       pkg ? structuredClone(pkg.content) : null,
@@ -457,12 +578,22 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
         }
       />
       {error && <Notice tone="red">{error}</Notice>}
+      <Stack mb="5">
+        <RequestPanel
+          id={id}
+          request={request}
+          hasPackage={!!pkg}
+          busy={busy || dirty}
+          run={run}
+        />
+      </Stack>
       {!pkg ? (
         <Panel>
           <Empty>
-            No package for this job yet. “Create package from evidence” builds a
-            starter draft using only verbatim lines from your evidence database.
-            The AI generator will replace this with tailored writing later.
+            No package for this job yet. “Ask AI to write this package” queues a
+            tailored, evidence-checked package for the next generator run.
+            “Create package from evidence” builds an instant starter draft using
+            only verbatim lines from your evidence database.
           </Empty>
         </Panel>
       ) : (
@@ -536,6 +667,11 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
               </Button>
             ))}
           </Flex>
+          {content.scores.summary && (
+            <Text fontSize="sm" color="muted" mb="5" maxW="900px">
+              {content.scores.summary}
+            </Text>
+          )}
           {tab === "resume" && (
             <SimpleGrid columns={{ base: 1, xl: 2 }} gap="5" alignItems="start">
               <Stack gap="4">
@@ -836,6 +972,17 @@ function PackageEditor({ id, data, go, saved, setVersion }) {
                 title="Evidence checks"
                 subtitle={`Run when this version was saved (${checks?.checked_at?.slice(0, 16).replace("T", " ") || "never"}). Save again after editing to re-check.`}
               />
+              {content.notes && (
+                <Box mb="4">
+                  <Text fontSize="sm" fontWeight="600" mb="1">
+                    Notes from{" "}
+                    {pkg.source === "claude" ? "the generator" : "this draft"}
+                  </Text>
+                  <Text fontSize="sm" color="muted">
+                    {content.notes}
+                  </Text>
+                </Box>
+              )}
               {(checks?.flags || []).length === 0 ? (
                 <Notice>
                   Every claim traces back to your evidence database.

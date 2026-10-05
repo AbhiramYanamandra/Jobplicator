@@ -264,6 +264,12 @@ def ensure_checked(row):
             checks = verify(normalised)
         repo().update("application_packages", {"checks": checks}, id=row["id"])
         row["checks"] = checks
+        if row.get("source") == "claude":
+            # Close any request this generated package answered, in case the
+            # generator did not mark it done itself.
+            for q in repo().all("package_requests", job_id=row["job_id"], status="pending"):
+                if (q["created_at"] or "") <= (row.get("created_at") or ""):
+                    repo().update("package_requests", {"status": "done", "done_at": now()}, id=q["id"])
     row["content"] = normalised
     return row
 
@@ -353,7 +359,7 @@ def starter(job: dict, dossier: dict, match: dict) -> dict:
     h = header()
     content = {
         "scores": {"fit": match.get("career_fit"), "ats": None,
-                   "summary": "Keyword fit from the evidence database. ATS scoring arrives with the AI generator.",
+                   "summary": "Keyword fit only. Use \"Ask AI to write this package\" for an ATS score and tailored writing.",
                    "strengths": [m["requirement"] for m in dossier.get("strong", [])][:8],
                    "gaps": [g["requirement"] for g in dossier.get("gaps", [])][:8]},
         "resume": {

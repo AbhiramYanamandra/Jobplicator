@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "./auth";
+import { CompanyBoards } from "./boards";
 import {
   Box,
   Button,
@@ -1584,6 +1585,7 @@ export function Ingestion({ revision, saved }) {
           </Panel>
         ))}
       </SimpleGrid>
+      <CompanyBoards revision={revision} saved={saved} />
       <SimpleGrid columns={{ base: 1, xl: 2 }} gap="5" mt="6">
         <Panel>
           <Section title="Connector availability" />

@@ -25,6 +25,7 @@ READ_ROUTES = [
     "/api/v3/weekly-report",
     "/api/resume-draft",
     "/api/packages",
+    "/api/boards",
 ]
 
 

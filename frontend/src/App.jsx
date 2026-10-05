@@ -477,7 +477,18 @@ export default function App() {
     </Box>
   );
 }
-function Dashboard({ revision, open, go }) {
+function Dashboard({ revision, open, go, saved }) {
+  useEffect(() => {
+    // Daily company-board check; the server skips it if it ran in the last 20h.
+    api("/api/boards/sync", { stale_only: true })
+      .then(
+        (r) =>
+          r &&
+          r.created > 0 &&
+          saved(`${r.created} new jobs from company boards`),
+      )
+      .catch(() => {});
+  }, []);
   const jobs = useData("/api/jobs", revision),
     an = useData("/api/analytics", revision),
     st = useData("/api/v3/strategy", revision),

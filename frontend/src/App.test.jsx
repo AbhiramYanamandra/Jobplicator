@@ -629,3 +629,59 @@ it("offers to build a package for a job that has none", async () => {
     ).toBe(true),
   );
 });
+
+it("queues a package for the AI generator with a note", async () => {
+  const user = userEvent.setup();
+  const row = fixtures["/api/packages"].packages[0];
+  show(`package/${row.job_id}`);
+  await user.click(
+    await screen.findByRole("button", { name: /Ask AI to rewrite/ }),
+  );
+  await user.type(
+    screen.getByRole("textbox", { name: "Note for the AI generator" }),
+    "Lead with FPGA work",
+  );
+  await user.click(screen.getByRole("button", { name: "Queue for AI" }));
+  await waitFor(() => {
+    const post = calls.find(
+      (c) =>
+        c.path === `/api/jobs/${row.job_id}/package/request` &&
+        c.options?.method === "POST",
+    );
+    expect(JSON.parse(post.options.body)).toEqual({
+      note: "Lead with FPGA work",
+    });
+  });
+});
+
+it("adds suggested company boards and syncs them", async () => {
+  const user = userEvent.setup();
+  show("ingestion");
+  await user.click(
+    await screen.findByRole("button", { name: "Add suggested companies" }),
+  );
+  await waitFor(() => {
+    const post = calls.find(
+      (c) => c.path === "/api/boards" && c.options?.method === "POST",
+    );
+    expect(JSON.parse(post.options.body).boards.length).toBe(
+      fixtures["/api/boards"].suggested.length,
+    );
+  });
+  await user.click(screen.getByRole("button", { name: /Sync now/ }));
+  await waitFor(() =>
+    expect(
+      calls.some(
+        (c) => c.path === "/api/boards/sync" && c.options?.method === "POST",
+      ),
+    ).toBe(true),
+  );
+});
+
+it("runs the daily company-board check when the dashboard opens", async () => {
+  show("dashboard");
+  await waitFor(() => {
+    const post = calls.find((c) => c.path === "/api/boards/sync");
+    expect(JSON.parse(post.options.body)).toEqual({ stale_only: true });
+  });
+});

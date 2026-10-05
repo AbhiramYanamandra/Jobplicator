@@ -1,6 +1,6 @@
 """API for application packages (one tailored bundle per job version)."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from auth import workspace
 from db import repo, now
 from services import packages
@@ -44,8 +44,16 @@ def list_packages():
             "follow_up_date": (apps.get(job_id) or {}).get("follow_up_date"),
             "updated_at": p["updated_at"],
         })
+    pending = {q["job_id"]: q for q in r.all("package_requests", status="pending")}
+    for row in out:
+        row["requested"] = row["job_id"] in pending
+    queued = [
+        {"job_id": q["job_id"], "title": jobs.get(q["job_id"], {}).get("title"),
+         "company": jobs.get(q["job_id"], {}).get("company"), "note": q["note"], "created_at": q["created_at"]}
+        for q in pending.values()
+    ]
     out.sort(key=lambda x: x["updated_at"] or "", reverse=True)
-    return {"packages": out, "jobs_without_package": len(jobs) - len(newest)}
+    return {"packages": out, "queued": queued, "jobs_without_package": len(jobs) - len(newest)}
 
 
 @router.get("/jobs/{job_id}/package")
@@ -81,6 +89,7 @@ def get_package(job_id: str, version: int | None = None):
         "evidence": cited,
         "header": packages.header(),
         "application": _clean(r.one("applications", job_id=job_id)),
+        "request": _clean(r.one("package_requests", job_id=job_id, status="pending")),
     }
 
 
@@ -121,3 +130,25 @@ def approve_package(job_id: str, version: int):
     r.update("application_packages", {"status": "draft", "updated_at": now()}, job_id=job_id, status="approved")
     r.update("application_packages", {"status": "approved", "updated_at": now()}, job_id=job_id, version=version)
     return _clean(packages.latest(job_id, version))
+
+
+@router.post("/jobs/{job_id}/package/request")
+def request_package(job_id: str, payload: dict = Body(default={})):
+    """Queue this job for the scheduled AI generator (next morning's run)."""
+    _job(job_id)
+    note = str(payload.get("note") or "").strip()[:1000]
+    r = repo()
+    r.lock_account()
+    pending = r.one("package_requests", job_id=job_id, status="pending")
+    if pending:
+        r.update("package_requests", {"note": note}, id=pending["id"])
+    else:
+        r.insert("package_requests", {"job_id": job_id, "note": note, "status": "pending", "created_at": now()})
+    return _clean(r.one("package_requests", job_id=job_id, status="pending"))
+
+
+@router.post("/jobs/{job_id}/package/request/cancel")
+def cancel_request(job_id: str):
+    _job(job_id)
+    repo().update("package_requests", {"status": "cancelled", "done_at": now()}, job_id=job_id, status="pending")
+    return {"ok": True}

@@ -1153,3 +1153,37 @@ TABLES["application_packages"] = Table(
         name="fk_application_packages_owned_parent",
     ),
 )
+# Queue of AI package (re)generation requests picked up by the scheduled
+# generator, and the company job boards synced from Greenhouse/Lever.
+# Added in migration 0003.
+TABLES["package_requests"] = Table(
+    "package_requests",
+    metadata,
+    Column("owner_id", String(36), nullable=False, index=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("job_id", Text, nullable=False),
+    Column("note", Text, nullable=False),
+    Column("status", Text, nullable=False),
+    Column("created_at", Text, nullable=False),
+    Column("done_at", Text),
+    UniqueConstraint("owner_id", "id", name="uq_package_requests_owner_key"),
+    ForeignKeyConstraint(
+        ["owner_id", "job_id"],
+        ["jobplicator.jobs.owner_id", "jobplicator.jobs.id"],
+        ondelete="CASCADE",
+        name="fk_package_requests_owned_parent",
+    ),
+)
+TABLES["board_watch"] = Table(
+    "board_watch",
+    metadata,
+    Column("owner_id", String(36), nullable=False, index=True),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("adapter", Text, nullable=False),
+    Column("token", Text, nullable=False),
+    Column("label", Text, nullable=False),
+    Column("last_synced_at", Text),
+    Column("last_result", Text),
+    UniqueConstraint("owner_id", "id", name="uq_board_watch_owner_key"),
+    UniqueConstraint("owner_id", "adapter", "token", name="uq_board_watch_board"),
+)

@@ -1664,5 +1664,46 @@
       "wam": ""
     },
     "application": null
+  },
+  "/api/boards": {
+    "boards": [],
+    "suggested": [
+      {
+        "adapter": "greenhouse",
+        "token": "cultureamp",
+        "label": "Culture Amp"
+      },
+      {
+        "adapter": "greenhouse",
+        "token": "easygo",
+        "label": "Easygo"
+      },
+      {
+        "adapter": "greenhouse",
+        "token": "optiverprivate",
+        "label": "Optiver"
+      },
+      {
+        "adapter": "greenhouse",
+        "token": "sonderaustralia",
+        "label": "Sonder"
+      },
+      {
+        "adapter": "lever",
+        "token": "megaport",
+        "label": "Megaport"
+      },
+      {
+        "adapter": "lever",
+        "token": "upguard",
+        "label": "UpGuard"
+      },
+      {
+        "adapter": "lever",
+        "token": "myob-2",
+        "label": "MYOB"
+      }
+    ],
+    "last_sync": null
   }
 }

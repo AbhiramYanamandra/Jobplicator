@@ -50,6 +50,7 @@ with tempfile.TemporaryDirectory(prefix="jobplicator-fixtures-") as temp:
             "/api/v3/weekly-report",
             "/api/resume-draft",
             "/api/packages",
+            "/api/boards",
             "/api/me",
             "/api/config",
         ]
