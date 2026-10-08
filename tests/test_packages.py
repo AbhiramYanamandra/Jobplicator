@@ -63,7 +63,12 @@ def test_starter_draft_uses_only_safe_verbatim_evidence(client):
     cited = {i for b in bullets for i in b["evidence_ids"]}
     texts = {e["evidence_id"]: e["raw_fact"] for e in PROFILE["evidence"]}
     assert cited and cited <= {"EV-1", "EV-2", "EV-3"}  # team and restricted evidence excluded
-    assert all(b["text"] == texts[b["evidence_ids"][0]] for b in bullets)
+    # Each bullet starts from its evidence fact, adds only the row's own tools/result, and still passes the checks.
+    plain = lambda s: s.replace("**", "")
+    assert all(plain(b["text"]).startswith(texts[b["evidence_ids"][0]].rstrip(".")) for b in bullets)
+    by_id = {b["evidence_ids"][0]: b["text"] for b in bullets}
+    assert by_id["EV-1"] == "Built **STM32** firmware for a driver display using **C++ and FreeRTOS**."
+    assert by_id["EV-2"] == "Added **Playwright** tests, increasing automated test coverage by **20%**."
     assert res["experience"][0]["dates"] == "Sep 2023 – Jun 2025"
     assert "Kubernetes" not in res["skills"][0]["value"]  # unsupported skill dropped
     assert pkg["checks"]["errors"] == 0, pkg["checks"]

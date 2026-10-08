@@ -388,6 +388,58 @@ def _usable(e):
     return not ("team result" in r or r.startswith("do not") or "do not use" in r or "use only if" in r)
 
 
+IRREGULAR_ING = {"made": "making", "built": "building", "led": "leading", "kept": "keeping",
+                 "ran": "running", "won": "winning", "gave": "giving", "took": "taking"}
+VAGUE_RESULT = re.compile(r"^(reported|recognition|operational|n/?a\b|none)", re.I)
+
+
+def _ing(verb):
+    v = verb.lower()
+    if v in IRREGULAR_ING:
+        return IRREGULAR_ING[v]
+    if v.endswith("ied"):
+        return v[:-3] + "ying"
+    if v.endswith("ed") and len(v) > 4:
+        return v[:-2] + "ing"
+    return None
+
+
+def _join(items):
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def compose_bullet(e):
+    """One detailed bullet from an evidence row: what (raw_fact), with which tools
+    (technologies), to what effect (result). Every word comes from the row, so the
+    checks still pass; only the joining words and bold markup are added."""
+    text = str(e.get("raw_fact") or "").strip().rstrip(".")
+    lowered = text.lower()
+    tools = []
+    for t in str(e.get("technologies") or "").split(";"):
+        t = t.strip()
+        # Skip descriptive entries ("telemetry data", "CAD / enclosure design").
+        if not t or " / " in t or not re.search(r"[A-Z0-9]", t) or t.lower() in lowered:
+            continue
+        tools.append(t)
+    # Bold tools the fact already names, and its headline number.
+    for t in str(e.get("technologies") or "").split(";"):
+        t = t.strip()
+        if t and " / " not in t and re.search(r"[A-Z0-9]", t):
+            text = re.sub(rf"(?<![\w*])({re.escape(t)})(?![\w*])", r"**\1**", text, count=1)
+    text = re.sub(r"(?<![\w*.])(\d[\d,.]*(?:\+|%|x\b|\s*ms\b)?(?:\s+(?:soldiers|images|samples|models))?)(?![\w*])",
+                  lambda m: f"**{m.group(1)}**" if len(m.group(1)) > 1 else m.group(1), text, count=1)
+    if tools:
+        text += f" using **{_join(tools[:4])}**"
+    result = str(e.get("result") or "").strip().rstrip(".")
+    if result and not VAGUE_RESULT.match(result):
+        first, _, rest = result.partition(" ")
+        verb = _ing(first)
+        if verb and rest and rest.lower() not in lowered:
+            rest = re.sub(r"(\d[\d,.]*\s*(%|x\b|ms\b)|\d[\d,.]+\+?)", r"**\1**", rest, count=1)
+            text += f", {verb} {rest}"
+    return text + "."
+
+
 def starter(job: dict, dossier: dict, match: dict) -> dict:
     """Build a package using only verbatim evidence. No invented wording."""
     profile = get_profile()
@@ -405,7 +457,8 @@ def starter(job: dict, dossier: dict, match: dict) -> dict:
     for pid in parents:
         rows = [e for e in evidence if e.get("parent_id") == pid and _usable(e)]
         rows.sort(key=lambda e: (e["evidence_id"] not in strong_ids, e.get("confidence") != "high"))
-        bullets = [{"text": e["raw_fact"], "evidence_ids": [e["evidence_id"]]} for e in rows[:3]]
+        limit = 5 if pid in exps else 3
+        bullets = [{"text": compose_bullet(e), "evidence_ids": [e["evidence_id"]]} for e in rows[:limit]]
         if not bullets:
             continue
         if pid in exps and len(experience) < 3:
@@ -442,6 +495,6 @@ def starter(job: dict, dossier: dict, match: dict) -> dict:
         "outreach": {"hiring_manager": "Not confirmed",
                      "linkedin_query": f"{job.get('company', '')} engineering manager {job.get('location', '')}".strip(),
                      "linkedin_message": dossier.get("outreach", "")[:600], "email": ""},
-        "notes": "Starter draft built only from verbatim evidence. Rewrite wording freely; keep the evidence citations.",
+        "notes": "Starter draft built only from your evidence rows (fact, tools and result joined into each bullet). Rewrite wording freely; keep the evidence citations.",
     }
     return PackageContent.model_validate(content).model_dump()

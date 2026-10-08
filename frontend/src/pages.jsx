@@ -42,10 +42,19 @@ import {
   download,
   safeUrl,
 } from "./ui";
+const cityOf = (loc) =>
+  (loc || "")
+    .split(/[,;|/]/)[0]
+    .replace(/\(.*?\)/g, "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+const cityLabel = (c) => c.replace(/\b\w/g, (m) => m.toUpperCase());
 export function Jobs({ revision, open, go }) {
   const d = useData("/api/jobs", revision),
     [search, setSearch] = useState(""),
     [role, setRole] = useState(""),
+    [location, setLocation] = useState(""),
     [status, setStatus] = useState(""),
     [sort, setSort] = useState("priority_score");
   return (
@@ -66,6 +75,7 @@ export function Jobs({ revision, open, go }) {
             .filter(
               (j) =>
                 (!role || j.role_family === role) &&
+                (!location || cityOf(j.location) === location) &&
                 (!status || (j.application_status || j.status) === status) &&
                 JSON.stringify(j).toLowerCase().includes(search.toLowerCase()),
             )
@@ -90,6 +100,19 @@ export function Jobs({ revision, open, go }) {
                           js.map((j) => j.role_family).filter(Boolean),
                         ),
                       ],
+                    ]}
+                  />
+                </Box>
+                <Box w={{ base: "100%", md: "210px" }}>
+                  <Select
+                    label="Location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    options={[
+                      { value: "", label: "All locations" },
+                      ...[...new Set(js.map((j) => cityOf(j.location)).filter(Boolean))]
+                        .sort()
+                        .map((c) => ({ value: c, label: cityLabel(c) })),
                     ]}
                   />
                 </Box>
